@@ -148,7 +148,7 @@ void manageCommentsLocation(Companies *companies);
 void deleteBranch(Companies *companies, BranchActivity *branch);
 void listHigherCompanies(Companies *companies, BranchActivity *branch);
 void saveCompanies(Companies *companies, BranchActivity *branch, char *filename);
-void freeCompanies(Companies *companies);
+void freeCompanies(Companies *companies, BranchActivity *branch);
 
 #ifdef __cplusplus
 }

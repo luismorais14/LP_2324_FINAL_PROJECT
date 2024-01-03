@@ -838,29 +838,30 @@ void deleteBranch(Companies *companies, BranchActivity *branch) {
     }
 }
 
-void loadCompaniesFromFile(Companies *companies, BranchActivity *branch ,char *filename) {
+void loadCompaniesFromFile(Companies *companies, BranchActivity *branch, char *filename) {
     int i, success = 0;
-    
+
     FILE *fp = fopen(filename, "rb");
     if (fp != NULL) {
         fread(&companies->companiesCounter, sizeof(int), 1, fp);
 
         if (companies->companiesCounter > 0) {
             companies->maxCompanies = companies->companiesCounter;
-            companies->company = (Company *) malloc(companies->companiesCounter * sizeof(Company));
+            companies->company = (Company *)malloc(companies->companiesCounter * sizeof(Company));
+
+            branch->branch = (Branch *)malloc(branch->maxBranch * sizeof(Branch));
 
             for (i = 0; i < companies->maxCompanies; i++) {
                 fread(&companies->company[i], sizeof(Company), 1, fp);
-
                 companies->company[i].comments = (Comment *)malloc(companies->company[i].maxComments * sizeof(Comment));
-                branch->branch = (Branch *) malloc(branch->maxBranch * sizeof(Branch));
-
                 fread(companies->company[i].comments, sizeof(Comment), companies->company[i].maxComments, fp);
+                fread(branch->branch[i].branch, sizeof (char), 1, fp);
                 
-                printf("%u [NIF]", companies->company[i].nif);
-                printf("%s [nome]", companies->company[i].name);
-                printf("%s [location]", companies->company[i].location);
                 
+                printf("%u [NIF]\n", companies->company[i].nif);
+                printf("%s [nome]\n", companies->company[i].name);
+                printf("%s [location]\n", companies->company[i].location);
+                printf("%s \n", branch->branch[i].branch);
             }
 
             success = 1;
@@ -868,12 +869,12 @@ void loadCompaniesFromFile(Companies *companies, BranchActivity *branch ,char *f
 
         fclose(fp);
     }
-    
+
     if (!success) {
         fp = fopen(filename, "wb");
         if (fp != NULL) {
-            companies->company = (Company *) malloc(companies->maxCompanies * sizeof(Company));
-            branch->branch = (Branch *) malloc(branch->maxBranch * sizeof(Branch));
+            companies->company = (Company *)malloc(companies->maxCompanies * sizeof(Company));
+            branch->branch = (Branch *)malloc(branch->maxBranch * sizeof(Branch));
         }
         fclose(fp);
     }
@@ -881,22 +882,23 @@ void loadCompaniesFromFile(Companies *companies, BranchActivity *branch ,char *f
 
 void saveCompanies(Companies *companies, BranchActivity *branch, char *filename) {
     int i;
-    
+
     FILE *fp = fopen(filename, "wb");
     if (fp == NULL) {
         exit(EXIT_FAILURE);
     }
 
-    fwrite(&companies->companiesCounter, sizeof (int), 1, fp);
-    
+    fwrite(&companies->companiesCounter, sizeof(int), 1, fp);
+    fwrite(branch, sizeof(BranchActivity), 1, fp);
+
     for (i = 0; i < companies->companiesCounter; i++) {
-        fwrite(&companies->company[i], sizeof (Company), 1, fp);
-        fwrite(companies->company[i].comments, sizeof (Comment), companies->company[i].maxComments, fp);
-        fwrite(branch->branch[i].branch, sizeof (Branch), branch->maxBranch, fp);
+        fwrite(&companies->company[i], sizeof(Company), 1, fp);
+        fwrite(companies->company[i].comments, sizeof(Comment), companies->company[i].maxComments, fp);
     }
 
     fclose(fp);
 }
+
 
 
 void listHigherCompanies(Companies *companies, BranchActivity *branch) {
@@ -916,11 +918,17 @@ void listHigherCompanies(Companies *companies, BranchActivity *branch) {
     }
 }
 
-void freeCompanies(Companies *companies) {
+void freeCompanies(Companies *companies, BranchActivity *branch) {
     if (companies->company) {
         free(companies->company);
         companies->company = NULL;
     }
 
+    if (branch->branch) {
+        free(branch->branch);
+        branch->branch = NULL;
+    }
+
     companies = NULL;
+    branch = NULL;
 }

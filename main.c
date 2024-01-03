@@ -28,14 +28,9 @@ int main(int argc, char** argv) {
     BranchActivity branch = {
         .branchCounter = 0,
         .maxBranch = 7,
-        
     };
 
 
-    if (branch.branch == NULL ) {
-        exit(EXIT_FAILURE);
-    }
-    
     loadCompaniesFromFile(&companies, &branch, FILENAME);
     
     
@@ -43,7 +38,7 @@ int main(int argc, char** argv) {
     
     saveCompanies(&companies, &branch, FILENAME);
 
-    freeCompanies(&companies);
+    freeCompanies(&companies, &branch);
 
     puts("End.");
 
