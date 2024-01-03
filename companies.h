@@ -147,7 +147,7 @@ void manageCommetsName(Companies *companies);
 void manageCommentsLocation(Companies *companies);
 void deleteBranch(Companies *companies, BranchActivity *branch);
 void listHigherCompanies(Companies *companies, BranchActivity *branch);
-void saveCompanies(Companies *companies, char *filename);
+void saveCompanies(Companies *companies, BranchActivity *branch, char *filename);
 void freeCompanies(Companies *companies);
 
 #ifdef __cplusplus

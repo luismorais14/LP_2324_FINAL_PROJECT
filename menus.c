@@ -81,6 +81,7 @@ void commentMenu(Companies *companies, BranchActivity *branch) {
                 createCommentLocation(companies);
                 break;
             case 4:
+                break;
             default:
                 puts("Invalid option. Please try again.");
         } 

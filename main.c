@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
     BranchActivity branch = {
         .branchCounter = 0,
         .maxBranch = 7,
-        .branch = (Branch *) malloc(branch.maxBranch * sizeof(Branch))
+        
     };
 
 
@@ -36,12 +36,12 @@ int main(int argc, char** argv) {
         exit(EXIT_FAILURE);
     }
     
-    loadCompaniesFromFile(&companies, FILENAME);
+    loadCompaniesFromFile(&companies, &branch, FILENAME);
     
     
     mainMenu(&companies, &branch, FILENAME);
     
-    saveCompanies(&companies, FILENAME);
+    saveCompanies(&companies, &branch, FILENAME);
 
     freeCompanies(&companies);
 

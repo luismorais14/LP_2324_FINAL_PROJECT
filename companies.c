@@ -838,7 +838,7 @@ void deleteBranch(Companies *companies, BranchActivity *branch) {
     }
 }
 
-void loadCompaniesFromFile(Companies *companies, char *filename) {
+void loadCompaniesFromFile(Companies *companies, BranchActivity *branch ,char *filename) {
     int i, success = 0;
     
     FILE *fp = fopen(filename, "rb");
@@ -847,16 +847,20 @@ void loadCompaniesFromFile(Companies *companies, char *filename) {
 
         if (companies->companiesCounter > 0) {
             companies->maxCompanies = companies->companiesCounter;
-            companies->company = (Company *)malloc(companies->companiesCounter * sizeof(Company));
+            companies->company = (Company *) malloc(companies->companiesCounter * sizeof(Company));
 
             for (i = 0; i < companies->maxCompanies; i++) {
                 fread(&companies->company[i], sizeof(Company), 1, fp);
 
-                companies->company[i].classification = alloc_int_array(companies->company[i].maxClassification);
                 companies->company[i].comments = (Comment *)malloc(companies->company[i].maxComments * sizeof(Comment));
+                branch->branch = (Branch *) malloc(branch->maxBranch * sizeof(Branch));
 
-                fread(companies->company[i].classification, sizeof(int), companies->company[i].maxClassification, fp);
                 fread(companies->company[i].comments, sizeof(Comment), companies->company[i].maxComments, fp);
+                
+                printf("%u [NIF]", companies->company[i].nif);
+                printf("%s [nome]", companies->company[i].name);
+                printf("%s [location]", companies->company[i].location);
+                
             }
 
             success = 1;
@@ -868,23 +872,14 @@ void loadCompaniesFromFile(Companies *companies, char *filename) {
     if (!success) {
         fp = fopen(filename, "wb");
         if (fp != NULL) {
-            fwrite(&companies->companiesCounter, sizeof(int), 1, fp); // Write the number of companies
-
-            companies->company = (Company *)malloc(companies->maxCompanies * sizeof(Company));
-
-            for (i = 0; i < companies->maxCompanies; i++) {
-                fwrite(&companies->company[i], sizeof(Company), 1, fp);
-
-                fwrite(companies->company[i].classification, sizeof(int), companies->company[i].maxClassification, fp);
-                fwrite(companies->company[i].comments, sizeof(Comment), companies->company[i].maxComments, fp);
-            }
-
-            fclose(fp);
+            companies->company = (Company *) malloc(companies->maxCompanies * sizeof(Company));
+            branch->branch = (Branch *) malloc(branch->maxBranch * sizeof(Branch));
         }
+        fclose(fp);
     }
 }
 
-void saveCompanies(Companies *companies, char *filename) {
+void saveCompanies(Companies *companies, BranchActivity *branch, char *filename) {
     int i;
     
     FILE *fp = fopen(filename, "wb");
@@ -896,8 +891,8 @@ void saveCompanies(Companies *companies, char *filename) {
     
     for (i = 0; i < companies->companiesCounter; i++) {
         fwrite(&companies->company[i], sizeof (Company), 1, fp);
-        fwrite(companies->company[i].classification, sizeof (int), companies->company[i].maxClassification, fp);
         fwrite(companies->company[i].comments, sizeof (Comment), companies->company[i].maxComments, fp);
+        fwrite(branch->branch[i].branch, sizeof (Branch), branch->maxBranch, fp);
     }
 
     fclose(fp);
