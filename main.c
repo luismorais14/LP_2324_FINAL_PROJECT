@@ -25,6 +25,10 @@ int main(int argc, char** argv) {
         .companiesCounter = 0
     };
     
+    Company company = {
+        .searchCounter = 0
+    };
+    
     BranchActivity branch = {
         .branchCounter = 0,
         .maxBranch = 7,

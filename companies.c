@@ -76,6 +76,7 @@ void companyNif(Companies companies, BranchActivity branch) {
 
     if (value != -1) {
         printCompany(companies.company[value], branch);
+        companies.company[value].searchCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -98,6 +99,7 @@ void companyName(Companies companies, BranchActivity branch) {
 
     if (value != -1) {
         printCompany(companies.company[value], branch);
+        companies.company[value].searchCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -120,6 +122,7 @@ void companyLocation(Companies companies, BranchActivity branch) {
 
     if (value != -1) {
         printCompany(companies.company[value], branch);
+        companies.company[value].searchCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -151,7 +154,7 @@ void createActivity(BranchActivity *branch) {
     }
 
     if (branch->branch != NULL) {
-        printf("Enter the new branch name: ");
+        puts("Enter the new branch name: ");
         if (scanf("%s", branch->branch[branch->branchCounter].branch) != 1) {
             puts("Invalid input. New branch creation failed.\n");
             cleanInputBuffer();
@@ -209,7 +212,7 @@ void insertCompanies(Companies *company, BranchActivity *branch, char *filename)
             puts(ERROR_COMPANY_ALREADY_EXIST);
             return;
         }
-}
+}  
 
 void updateCompany(Company *company, BranchActivity *branch, char *filename) {
     int nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
@@ -235,7 +238,6 @@ void updateCompaniesByNif(Companies *companies, BranchActivity *branch, char *fi
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
         return;
     }
-    
 }
 
 void updateCompaniesByName(Companies *companies, BranchActivity *branch, char *filename) {    
@@ -318,10 +320,10 @@ void selectBranch(BranchActivity *branch, char *selectedBranch) {
     int option;
     
     do {
-    puts("Select one of the following branches of activity:");
-    printBranches(*branch);
-    printf("Choose a branch [0-%d]: ", branch->branchCounter - 1);
-    scanf("%d", &option);
+        puts("Select one of the following branches of activity:");
+        printBranches(*branch);
+        printf("Choose a branch [0-%d]: ", branch->branchCounter - 1);
+        scanf("%d", &option);
     
     if (branch->branch != NULL && option >= 0 && option < branch->branchCounter) {
             strcpy(selectedBranch, branch->branch[option].branch);
@@ -931,4 +933,37 @@ void freeCompanies(Companies *companies, BranchActivity *branch) {
 
     companies = NULL;
     branch = NULL;
+}
+
+
+int *MostSearchedCompanies(Companies companies, int size) {
+    int highNumbers[size], actualHighNumbers = 0, counter = 0;
+    for (int i = 0; i < size; i++){
+        for(int j = 0; j < companies.companiesCounter; j++) {
+            
+            Company company = companies.company[j];
+            
+            if (company.searchCounter > actualHighNumbers) {
+                for (int h = 0; h < size; h++) {
+                   if (j == highNumbers[h]) {
+                       counter++;
+                   } 
+                }
+                if(counter == 0){
+                    actualHighNumbers = company.searchCounter;     
+                    highNumbers[i] = j;
+                }                
+            }
+        }
+    }
+    return highNumbers;       
+}
+
+void listMostSearchedCompanies(Companies companies, BranchActivity branch) {
+    int size = companies.companiesCounter >= 3 ? 3 : companies.companiesCounter;
+    int search[size] = MostSearchedCompanies(companies, size);
+    
+    for (int i = 0; i < size ; i++){
+        printCompany(companies.company[search[i]], branch);     
+    }
 }
