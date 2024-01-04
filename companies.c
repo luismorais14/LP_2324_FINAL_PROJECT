@@ -863,7 +863,7 @@ void loadCompaniesFromFile(Companies *companies, BranchActivity *branch, char *f
                 printf("%u [NIF]\n", companies->company[i].nif);
                 printf("%s [nome]\n", companies->company[i].name);
                 printf("%s [location]\n", companies->company[i].location);
-                printf("%s \n", branch->branch[i].branch);
+                printf("%s [Branch]\n", branch->branch[i].branch);
             }
 
             success = 1;
@@ -890,9 +890,13 @@ void saveCompanies(Companies *companies, BranchActivity *branch, char *filename)
         exit(EXIT_FAILURE);
     }
 
-    fwrite(&companies->companiesCounter, sizeof(int), 1, fp);
-    fwrite(branch, sizeof(BranchActivity), 1, fp);
-
+    fwrite(&companies->companiesCounter, sizeof (int), 1, fp);
+    fwrite(&branch->maxBranch, sizeof (int), 1, fp);
+    
+    for (i = 0; i < branch->branchCounter; i++) {
+        fwrite(&branch->branch[i], sizeof (Branch), 1, fp);
+    }
+    
     for (i = 0; i < companies->companiesCounter; i++) {
         fwrite(&companies->company[i], sizeof(Company), 1, fp);
         fwrite(companies->company[i].comments, sizeof(Comment), companies->company[i].maxComments, fp);
@@ -936,34 +940,35 @@ void freeCompanies(Companies *companies, BranchActivity *branch) {
 }
 
 
-int *MostSearchedCompanies(Companies companies, int size) {
-    int highNumbers[size], actualHighNumbers = 0, counter = 0;
-    for (int i = 0; i < size; i++){
-        for(int j = 0; j < companies.companiesCounter; j++) {
-            
-            Company company = companies.company[j];
-            
-            if (company.searchCounter > actualHighNumbers) {
-                for (int h = 0; h < size; h++) {
-                   if (j == highNumbers[h]) {
-                       counter++;
-                   } 
-                }
-                if(counter == 0){
-                    actualHighNumbers = company.searchCounter;     
-                    highNumbers[i] = j;
-                }                
-            }
-        }
-    }
-    return highNumbers;       
-}
+//int *MostSearchedCompanies(Companies companies, int size) {
+//    int highNumbers[size], actualHighNumbers = 0, counter = 0;
+//    for (int i = 0; i < size; i++){
+//        for(int j = 0; j < companies.companiesCounter; j++) {
+//            
+//            Company company = companies.company[j];
+//            
+//            if (company.searchCounter > actualHighNumbers) {
+//                for (int h = 0; h < size; h++) {
+//                   if (j == highNumbers[h]) {
+//                       counter++;
+//                   } 
+//                }
+//                if(counter == 0){
+//                    actualHighNumbers = company.searchCounter;     
+//                    highNumbers[i] = j;
+//                }                
+//            }
+//        }
+//    }
+//    return highNumbers;       
+//}
+//
+//void listMostSearchedCompanies(Companies companies, BranchActivity branch) {
+//    int size = companies.companiesCounter >= 3 ? 3 : companies.companiesCounter;
+//    int search[size] = MostSearchedCompanies(companies, size);
+//    
+//    for (int i = 0; i < size ; i++){
+//        printCompany(companies.company[search[i]], branch);     
+//    }
+//}
 
-void listMostSearchedCompanies(Companies companies, BranchActivity branch) {
-    int size = companies.companiesCounter >= 3 ? 3 : companies.companiesCounter;
-    int search[size] = MostSearchedCompanies(companies, size);
-    
-    for (int i = 0; i < size ; i++){
-        printCompany(companies.company[search[i]], branch);     
-    }
-}

@@ -181,7 +181,7 @@ void reportsMenu(Companies *companies, BranchActivity *branch) {
                 listHigherCompanies(companies, branch);
                 break;
             case 2:
-                listMostSearchedCompanies(*companies, *branch);
+                //listMostSearchedCompanies(*companies, *branch);
                 break;
             case 3:
                 break;

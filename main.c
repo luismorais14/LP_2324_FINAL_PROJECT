@@ -18,7 +18,6 @@
  *
  */
 
-
 int main(int argc, char** argv) { 
     Companies companies = {
         .maxCompanies = 10,
@@ -48,4 +47,3 @@ int main(int argc, char** argv) {
 
     return (EXIT_SUCCESS);
 }
-
