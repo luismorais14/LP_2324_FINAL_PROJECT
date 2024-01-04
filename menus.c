@@ -171,7 +171,7 @@ void reportsMenu(Companies *companies, BranchActivity *branch) {
         puts("       REPORTS MENU");
         puts("----------------------------");
         puts("1- List companies with a rating higher than 4.5");
-        puts("2- List the most popular companies");
+        puts("2- List the most searched companies");
         puts("3- Go Back");
         puts("Choose one of the options above: [1 - 3]");
         scanf("%d", &option);
