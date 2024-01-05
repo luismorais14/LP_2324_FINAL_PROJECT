@@ -470,16 +470,10 @@ void createCommentNif(Companies *companies) {
 void createCommentName(Companies *companies) {
     char tmpName[MAX_NAME];
     int index;
-
-    puts(MSG_GET_NAME);
-    if (scanf("%s", tmpName) != NULL) {
-        unsigned int len = strlen(tmpName) - 1;
-        if (tmpName[len] == '\n') {
-            tmpName[len] = '\0';
-        } else {
-            cleanInputBuffer();
-        }
-    }
+    
+    cleanInputBuffer();
+    
+    readString(tmpName, MAX_NAME, MSG_GET_NAME);
     
     index = searchCompanyName(*companies, tmpName);
     
@@ -496,12 +490,12 @@ void createCommentName(Companies *companies) {
     
     
     if (index != -1) {
-    readString(companies->company[index].comments[companies->company->commentsCounter].email, MAX_EMAIL, MSG_GET_EMAIL);
-    readString(companies->company[index].comments[companies->company->commentsCounter].username, MAX_USERNAME, MSG_GET_USER);
-    readString(companies->company[index].comments[companies->company->commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
-    readString(companies->company[index].comments[companies->company->commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
+        readString(companies->company[index].comments[companies->company->commentsCounter].email, MAX_EMAIL, MSG_GET_EMAIL);
+        readString(companies->company[index].comments[companies->company->commentsCounter].username, MAX_USERNAME, MSG_GET_USER);
+        readString(companies->company[index].comments[companies->company->commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
+        readString(companies->company[index].comments[companies->company->commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
     
-    companies->company->commentsCounter++;
+        companies->company->commentsCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -851,17 +845,22 @@ void loadCompaniesFromFile(Companies *companies, BranchActivity *branch, char *f
             companies->maxCompanies = companies->companiesCounter;
             companies->company = (Company *)malloc(companies->companiesCounter * sizeof(Company));
 
+            branch->maxBranch = companies->companiesCounter;
             branch->branch = (Branch *)malloc(branch->maxBranch * sizeof(Branch));
 
             for (i = 0; i < companies->maxCompanies; i++) {
                 fread(&companies->company[i], sizeof(Company), 1, fp);
+
                 companies->company[i].comments = (Comment *)malloc(companies->company[i].maxComments * sizeof(Comment));
+                
                 fread(companies->company[i].comments, sizeof(Comment), companies->company[i].maxComments, fp);
-                fread(branch->branch[i].branch, sizeof (char), 1, fp);
+
                 
-                
+                fread(branch->branch[i].branch, sizeof(char), branch->maxBranch, fp);
+
+                printf("Index: %d\n", i);
                 printf("%u [NIF]\n", companies->company[i].nif);
-                printf("%s [nome]\n", companies->company[i].name);
+                printf("%s [name]\n", companies->company[i].name);
                 printf("%s [location]\n", companies->company[i].location);
                 printf("%s [Branch]\n", branch->branch[i].branch);
             }
@@ -890,20 +889,18 @@ void saveCompanies(Companies *companies, BranchActivity *branch, char *filename)
         exit(EXIT_FAILURE);
     }
 
-    fwrite(&companies->companiesCounter, sizeof (int), 1, fp);
-    fwrite(&branch->maxBranch, sizeof (int), 1, fp);
-    
-    for (i = 0; i < branch->branchCounter; i++) {
-        fwrite(&branch->branch[i], sizeof (Branch), 1, fp);
-    }
-    
+    fwrite(&companies->companiesCounter, sizeof(int), 1, fp);
+    fwrite(&branch->branchCounter, sizeof(int), 1, fp);
+
     for (i = 0; i < companies->companiesCounter; i++) {
+        fwrite(&companies->company[i].commentsCounter, sizeof(int), 1, fp);
         fwrite(&companies->company[i], sizeof(Company), 1, fp);
         fwrite(companies->company[i].comments, sizeof(Comment), companies->company[i].maxComments, fp);
     }
 
     fclose(fp);
 }
+
 
 
 

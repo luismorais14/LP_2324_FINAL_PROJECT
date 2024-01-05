@@ -20,12 +20,13 @@
 
 int main(int argc, char** argv) { 
     Companies companies = {
-        .maxCompanies = 10,
         .companiesCounter = 0
     };
     
     Company company = {
-        .searchCounter = 0
+        .searchCounter = 0,
+        .classificationCounter = 0,
+        .commentsCounter = 0
     };
     
     BranchActivity branch = {
