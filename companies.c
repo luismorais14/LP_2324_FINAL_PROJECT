@@ -58,14 +58,14 @@ int searchCompanyLocation(Companies companies, char *location) {
 
 void printCompany(Company company, BranchActivity branch) {
     if (company.status == ATIVO && branch.status == ATIVO) {
-    puts("----------------------------");
-    printf("Name: %s\n", company.name);
-    printf("Nif: %u\n", company.nif);
-    printf("Adress: %s\n", company.adress);
-    printf("Location: %s\n", company.location);
-    printf("Postal Code: %s\n", company.postalCode);
-    printf("Branch of Activity: %s\n", company.branch);
-    printf("Category: %s\n", convertTypeCategory(company.companyCategory));
+        puts("----------------------------");
+        printf("Name: %s\n", company.name);
+        printf("Nif: %u\n", company.nif);
+        printf("Adress: %s\n", company.adress);
+        printf("Location: %s\n", company.location);
+        printf("Postal Code: %s\n", company.postalCode);
+        printf("Branch of Activity: %s\n", company.branch);
+        printf("Category: %s\n", convertTypeCategory(company.companyCategory));
     } else {
         puts("This company is inactive.");
     }
@@ -455,13 +455,13 @@ void createCommentNif(Companies *companies) {
     
     
     if (index != -1) {
-    readString(companies->company[index].comments[companies->company->commentsCounter].email, MAX_EMAIL, MSG_GET_EMAIL);
-    readString(companies->company[index].comments[companies->company->commentsCounter].username, MAX_USERNAME, MSG_GET_USER);
-    readString(companies->company[index].comments[companies->company->commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
-    readString(companies->company[index].comments[companies->company->commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
-    companies->company[index].comments[companies->company->commentsCounter].status = ATIVO;
+        readString(companies->company[index].comments[companies->company->commentsCounter].email, MAX_EMAIL, MSG_GET_EMAIL);
+        readString(companies->company[index].comments[companies->company->commentsCounter].username, MAX_USERNAME, MSG_GET_USER);
+        readString(companies->company[index].comments[companies->company->commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
+        readString(companies->company[index].comments[companies->company->commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
+        companies->company[index].comments[companies->company->commentsCounter].status = ATIVO;
     
-    companies->company->commentsCounter++;
+        companies->company->commentsCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -936,36 +936,49 @@ void freeCompanies(Companies *companies, BranchActivity *branch) {
     branch = NULL;
 }
 
+void listComments(Company company) {
+    for (int i = 0; i < company.commentsCounter; i++) {
+        printf("\nUsername: %s\n", company.comments[i].username);
+        printf("Email: %s\n", company.comments[i].email);
+        printf("Title: %s\n", company.comments[i].title);
+        printf("Comment: %s\n", company.comments[i].text);
+    }
+}
 
-//int *MostSearchedCompanies(Companies companies, int size) {
-//    int highNumbers[size], actualHighNumbers = 0, counter = 0;
-//    for (int i = 0; i < size; i++){
-//        for(int j = 0; j < companies.companiesCounter; j++) {
-//            
-//            Company company = companies.company[j];
-//            
-//            if (company.searchCounter > actualHighNumbers) {
-//                for (int h = 0; h < size; h++) {
-//                   if (j == highNumbers[h]) {
-//                       counter++;
-//                   } 
-//                }
-//                if(counter == 0){
-//                    actualHighNumbers = company.searchCounter;     
-//                    highNumbers[i] = j;
-//                }                
-//            }
-//        }
-//    }
-//    return highNumbers;       
-//}
-//
-//void listMostSearchedCompanies(Companies companies, BranchActivity branch) {
-//    int size = companies.companiesCounter >= 3 ? 3 : companies.companiesCounter;
-//    int search[size] = MostSearchedCompanies(companies, size);
-//    
-//    for (int i = 0; i < size ; i++){
-//        printCompany(companies.company[search[i]], branch);     
-//    }
-//}
+
+void mostSearchedCompanies(Companies companies, int size, int *array) {
+    int actualHighNumbers = 0, counter = 0;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < companies.companiesCounter; j++) {
+            int searchCounter = companies.company[j].searchCounter;
+
+            if (searchCounter > actualHighNumbers) {
+                for (int h = 0; h < size; h++) {
+                    if (j == array[h]) {
+                        counter++;
+                    }
+                }
+                if (counter == 0) {
+                    actualHighNumbers = searchCounter;
+                    array[i] = j;
+                }
+            }
+        }
+    }
+}
+
+void listMostCompanies(Companies companies, int sizeOfTop) {
+    if (companies.companiesCounter > 0) {
+        int size = companies.companiesCounter >= sizeOfTop ? sizeOfTop : companies.companiesCounter;
+        int array[size];
+
+        mostSearchedCompanies(companies, size, array);
+
+        for (int i = 0; i < size; i++) {
+            printf("The %d company name is : %s \n", i + 1, companies.company[array[i]].name);
+            printf("Average Rating: %.2f\n", companies.company[array[i]].averageRating);
+            listComments(companies.company[array[i]]);
+        }
+    }
+}
 

@@ -3,6 +3,8 @@
 #include "menus.h"
 #include "companies.h"
 
+#define TOP_SEARCH_QUANTITY 3
+
 void displaySearchMenu() {
     puts("----------------------------");
     puts("1- Search by NIF");
@@ -181,7 +183,7 @@ void reportsMenu(Companies *companies, BranchActivity *branch) {
                 listHigherCompanies(companies, branch);
                 break;
             case 2:
-                //listMostSearchedCompanies(*companies, *branch);
+                listMostCompanies(*companies, TOP_SEARCH_QUANTITY);
                 break;
             case 3:
                 break;
