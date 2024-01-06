@@ -440,13 +440,13 @@ void createCommentNif(Companies *companies) {
     
     Company *pComment = &companies->company[index].comments;
     
-    if (companies->company->commentsCounter == companies->company->maxComments) {
+    if (companies->company[index].commentsCounter == companies->company[index].maxComments) {
         pComment = (Comment *) realloc(companies->company[index].comments, companies->company[index].maxComments * 2 * sizeof(Comment));
     }
     
     if (pComment != NULL ) {
-            companies->company->maxComments *= 2;
-            companies->company->comments = pComment;
+            companies->company[index].maxComments *= 2;
+            companies->company[index].comments = pComment;
         }
     
     
@@ -457,7 +457,7 @@ void createCommentNif(Companies *companies) {
         readString(companies->company[index].comments[companies->company->commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
         companies->company[index].comments[companies->company->commentsCounter].status = ATIVO;
     
-        companies->company->commentsCounter++;
+        companies->company[index].commentsCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -473,15 +473,15 @@ void createCommentName(Companies *companies) {
     
     index = searchCompanyName(*companies, tmpName);
     
-    Company *pComment = &companies->company->comments;
+    Company *pComment = &companies->company[index].comments;
     
-    if (companies->company->commentsCounter == companies->company->maxComments) {
-        pComment = (Comment *) realloc(companies->company->comments, companies->company->maxComments * 2 * sizeof(Comment));
+    if (companies->company[index].commentsCounter == companies->company[index].maxComments) {
+        pComment = (Comment *) realloc(companies->company[index].comments, companies->company[index].maxComments * 2 * sizeof(Comment));
     }
     
     if (pComment != NULL ) {
-            companies->company->maxComments *= 2;
-            companies->company->comments = pComment;
+            companies->company[index].maxComments *= 2;
+            companies->company[index].comments = pComment;
         }
     
     
@@ -491,7 +491,7 @@ void createCommentName(Companies *companies) {
         readString(companies->company[index].comments[companies->company->commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
         readString(companies->company[index].comments[companies->company->commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
     
-        companies->company->commentsCounter++;
+        companies->company[index].commentsCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -513,15 +513,15 @@ void createCommentLocation(Companies *companies) {
     
     index = searchCompanyLocation(*companies, tempLocation);
     
-    Company *pComment = &companies->company->comments;
+    Company *pComment = &companies->company[index].comments;
     
-    if (companies->company->commentsCounter == companies->company->maxComments) {
-        pComment = (Comment *) realloc(companies->company->comments, companies->company->maxComments * 2 * sizeof(Comment));
+    if (companies->company[index].commentsCounter == companies->company[index].maxComments) {
+        pComment = (Comment *) realloc(companies->company[index].comments, companies->company[index].maxComments * 2 * sizeof(Comment));
     }
     
     if (pComment != NULL ) {
-            companies->company->maxComments *= 2;
-            companies->company->comments = pComment;
+            companies->company[index].maxComments *= 2;
+            companies->company[index].comments = pComment;
         }
     
     
@@ -531,7 +531,7 @@ void createCommentLocation(Companies *companies) {
     readString(companies->company[index].comments[companies->company->commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
     readString(companies->company[index].comments[companies->company->commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
     
-    companies->company->commentsCounter++;
+    companies->company[index].commentsCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -541,21 +541,21 @@ void createClassificationNif(Companies *companies) {
     int nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     int index = searchCompanyNif(*companies, nif);
     
-    int *pRating;
+    int *pRating = &companies->company[index].classification;
     
-    if (companies->company->classificationCounter == companies->company->maxClassification) {
-        pRating = (int *) realloc(companies->company->classification, companies->company->maxClassification * 2 * sizeof(int));
+    if (companies->company[index].classificationCounter == companies->company[index].maxClassification) {
+        pRating = (int *) realloc (companies->company[index].classification, companies->company[index].maxClassification * 2 * sizeof(int));
     }
     
     if (pRating != NULL) {
-        companies->company->maxComments *= 2;
-        companies->company->classification = pRating;
+        companies->company[index].maxClassification *= 2;
+        companies->company[index].classification = pRating;
     }
         
     if (index != -1) {     
         companies->company[index].classification += getInt(MIN_RATING, MAX_RATING, MSG_GET_RATING);
         
-        companies->company->classificationCounter++;
+        companies->company[index].classificationCounter++;
     } else {
        puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -577,22 +577,22 @@ void createClassificationName(Companies *companies) {
     
     index = searchCompanyName(*companies, tmpName);
     
-    Company *pComment = &companies->company->comments;
+    Company *pRating = &companies->company[index].classification;
     
-    if (companies->company->commentsCounter == companies->company->maxComments) {
-        pComment = (Comment *) realloc(companies->company->comments, companies->company->maxComments * 2 * sizeof(Comment));
+    if (companies->company[index].classificationCounter == companies->company[index].maxClassification) {
+        pRating = (int *) realloc(companies->company[index].classification, companies->company[index].maxClassification * 2 * sizeof(int));
     }
     
-    if (pComment != NULL ) {
-            companies->company->maxComments *= 2;
-            companies->company->comments = pComment;
+    if (pRating != NULL ) {
+            companies->company[index].maxClassification *= 2;
+            companies->company[index].classification = pRating;
         }
     
     
     if (index != -1) {
         companies->company[index].classification = getInt(MIN_RATING, MAX_RATING, MSG_GET_RATING);
         
-        companies->company->classificationCounter++;
+        companies->company[index].classificationCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -614,22 +614,22 @@ void createClassificationLocation(Companies *companies) {
     
     index = searchCompanyLocation(*companies, tempLocation);
     
-    Company *pComment = &companies->company->comments;
+    Company *pRating = &companies->company[index].classification;
     
-    if (companies->company->commentsCounter == companies->company->maxComments) {
-        pComment = (Comment *) realloc(companies->company->comments, companies->company->maxComments * 2 * sizeof(Comment));
+    if (companies->company[index].classificationCounter == companies->company[index].maxClassification) {
+        pRating = (int *) realloc(companies->company[index].classification, companies->company[index].maxClassification * 2 * sizeof(int));
     }
     
-    if (pComment != NULL ) {
-            companies->company->maxComments *= 2;
-            companies->company->comments = pComment;
+    if (pRating != NULL ) {
+            companies->company[index].maxClassification *= 2;
+            companies->company[index].classification = pRating;
         }
     
     
     if (index != -1) {
         companies->company[index].classification = getInt(MIN_RATING, MAX_RATING, MSG_GET_RATING);
         
-    companies->company->classificationCounter++;
+    companies->company[index].classificationCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -835,19 +835,25 @@ void loadCompaniesFromFile(Companies *companies, BranchActivity *branch, char *f
 
         if (companies->companiesCounter > 0) {
             companies->maxCompanies = companies->companiesCounter;
-            companies->company = (Company *) malloc(companies->companiesCounter * sizeof(Company));
-
+            companies->company = (Company *)malloc(companies->maxCompanies * sizeof(Company));
             branch->maxBranch = branch->branchCounter > 7 ? branch->branchCounter * 2 : 7;
             branch->branch = (Branch *)malloc(branch->maxBranch * sizeof(Branch));
 
-            for (i = 0; i < companies->maxCompanies; i++) {
+            for (i = 0; i < companies->companiesCounter; i++) {
                 fread(&companies->company[i], sizeof(Company), 1, fp);
 
+                // Allocate memory for comments
                 companies->company[i].comments = (Comment *)malloc(companies->company[i].commentsCounter * sizeof(Comment));
 
+                // Read comments from file
                 fread(companies->company[i].comments, sizeof(Comment), companies->company[i].commentsCounter, fp);
 
-                fread(branch->branch[i].branch, sizeof(char), MAX_BRANCH, fp);
+                // Allocate memory for branch
+                //branch->branch[i].branch = (char *)malloc(branch->branchCounter * sizeof(char));
+                fread(branch->branch[i].branch, sizeof(char), branch->branchCounter, fp);
+                // Read branch from file
+                fread(branch->branch[i].branch, sizeof(char), branch->branchCounter, fp);
+
                 fread(&branch->branch[i].status, sizeof(Status), 1, fp);
 
                 printf("Index: %d\n", i);
@@ -858,7 +864,6 @@ void loadCompaniesFromFile(Companies *companies, BranchActivity *branch, char *f
                 printf("Status empresa: %d\n", companies->company[i].status);
                 printf("Status branches: %d\n", branch->branch[i].status);
             }
-
 
             success = 1;
         }
@@ -891,17 +896,16 @@ void saveCompanies(Companies *companies, BranchActivity *branch, char *filename)
     for (i = 0; i < companies->companiesCounter; i++) {
         fwrite(&companies->company[i], sizeof(Company), 1, fp);
 
+        // Write comments to file
         fwrite(companies->company[i].comments, sizeof(Comment), companies->company[i].commentsCounter, fp);
 
-        fwrite(branch->branch[i].branch, sizeof(char), MAX_BRANCH, fp);
+        // Write branch to file
+        fwrite(branch->branch[i].branch, sizeof(char), branch->branchCounter, fp);
         fwrite(&branch->branch[i].status, sizeof(Status), 1, fp);
     }
 
     fclose(fp);
 }
-
-
-
 
 
 

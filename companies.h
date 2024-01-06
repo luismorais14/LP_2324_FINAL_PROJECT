@@ -147,7 +147,7 @@ void manageCommentsLocation(Companies *companies);
 void deleteBranch(Companies *companies, BranchActivity *branch);
 void listHigherCompanies(Companies *companies, Branch *branch);
 void saveCompanies(Companies *companies, BranchActivity *branch, char *filename);
-void freeCompanies(Companies *companies, BranchActivity *branch);
+void freeMemory(Companies *companies, BranchActivity *branch);
 void listMostCompanies(Companies companies, int sizeOfTop);
 
 #ifdef __cplusplus
