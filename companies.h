@@ -79,13 +79,13 @@ typedef enum {
 
 typedef struct {
     char branch[MAX_BRANCH];
+    Status status;
 } Branch;
 
 typedef struct {
     int maxBranch;
     int branchCounter;
     Branch *branch;
-    Status status;
 } BranchActivity;
 
 typedef struct {
@@ -110,8 +110,7 @@ typedef struct {
     int commentsCounter;
     int maxClassification;
     int classificationCounter;
-    float averageRating;
-    int *classification;
+    int classification;
     Comment *comments;
     int searchCounter;
 } Company;
@@ -125,10 +124,9 @@ typedef struct {
 
 void loadCompanyFromFile(Companies *, char*);
 
-void printCompany(Company company, BranchActivity branch);
-void companyNif(Companies companies, BranchActivity branch);
-void companyName(Companies companies, BranchActivity branch);
-void companyLocation(Companies companies, BranchActivity branch);
+void companyNif(Companies companies, Branch branch);
+void companyName(Companies companies, Branch branch);
+void companyLocation(Companies companies, Branch branch);
 void createActivity(BranchActivity *branch);
 void printBranches(BranchActivity branch);
 void insertCompanies(Companies *company, BranchActivity *branch, char *filename);
@@ -147,7 +145,7 @@ void manageCommentsNif(Companies *companies);
 void manageCommetsName(Companies *companies);
 void manageCommentsLocation(Companies *companies);
 void deleteBranch(Companies *companies, BranchActivity *branch);
-void listHigherCompanies(Companies *companies, BranchActivity *branch);
+void listHigherCompanies(Companies *companies, Branch *branch);
 void saveCompanies(Companies *companies, BranchActivity *branch, char *filename);
 void freeCompanies(Companies *companies, BranchActivity *branch);
 void listMostCompanies(Companies companies, int sizeOfTop);

@@ -19,20 +19,9 @@
  */
 
 int main(int argc, char** argv) { 
-    Companies companies = {
-        .companiesCounter = 0
-    };
-    
-    Company company = {
-        .searchCounter = 0,
-        .classificationCounter = 0,
-        .commentsCounter = 0
-    };
-    
-    BranchActivity branch = {
-        .branchCounter = 0,
-        .maxBranch = 7,
-    };
+    Companies companies;
+        
+    BranchActivity branch;
 
 
     loadCompaniesFromFile(&companies, &branch, FILENAME);

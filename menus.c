@@ -15,7 +15,7 @@ void displaySearchMenu() {
     puts("Choose one of the options above: [1 - 4]");
 }
 
-void searchMenu(Companies *companies, BranchActivity *branch) {
+void searchMenu(Companies *companies, Branch *branch) {
     int option;
 
     do {

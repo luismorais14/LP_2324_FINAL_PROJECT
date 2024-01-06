@@ -56,7 +56,7 @@ int searchCompanyLocation(Companies companies, char *location) {
     return -1;
 }
 
-void printCompany(Company company, BranchActivity branch) {
+void printCompany(Company company, Branch branch) {
     if (company.status == ATIVO && branch.status == ATIVO) {
         puts("----------------------------");
         printf("Name: %s\n", company.name);
@@ -71,7 +71,7 @@ void printCompany(Company company, BranchActivity branch) {
     }
 }
 
-void companyNif(Companies companies, BranchActivity branch) {
+void companyNif(Companies companies, Branch branch) {
     long long value = searchCompanyNif(companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
 
     if (value != -1) {
@@ -82,7 +82,7 @@ void companyNif(Companies companies, BranchActivity branch) {
     }
 }
 
-void companyName(Companies companies, BranchActivity branch) {
+void companyName(Companies companies, Branch branch) {
     char tempName[MAX_NAME];
 
     puts(MSG_GET_NAME);
@@ -105,7 +105,7 @@ void companyName(Companies companies, BranchActivity branch) {
     }
 }
 
-void companyLocation(Companies companies, BranchActivity branch) {
+void companyLocation(Companies companies, Branch branch) {
     char tempLocation[MAX_NAME];
 
     puts(MSG_GET_NAME);
@@ -161,6 +161,7 @@ void createActivity(BranchActivity *branch) {
             branch->branchCounter--;
         } else {
             puts("New branch created successfully!\n");
+            branch->branch[branch->branchCounter].status = ATIVO;
             branch->branchCounter++;
         }
     } else {
@@ -194,7 +195,6 @@ int insertCompany(Companies *companies, BranchActivity *branch, char *filename) 
             readString(company->location, MAX_LOCATION, MSG_GET_LOCATION);
             selectBranch(branch, tmpBranch);
             strcpy(company->branch, tmpBranch);
-            branch->status = ATIVO;
             company->companyCategory = getInt(MIN_CATEGORY, MAX_CATEGORY, MSG_GET_CATEGORY);
             company->status = getInt(MIN_STATUS, MAX_STATUS, MSG_GET_STATUS);
 
@@ -331,7 +331,7 @@ void selectBranch(BranchActivity *branch, char *selectedBranch) {
             puts("Invalid option. Please try again.");
         }
     
-    } while (option < 0 || option > branch->branchCounter);
+    } while (option < 0 || option >= branch->branchCounter);
 }
 
 void deleteCompanyData(Company *company) {
@@ -346,31 +346,29 @@ void deleteCompanyData(Company *company) {
 }
 
 void deleteCompanyNif(Companies *companies, char *filename) {
-    int i, j, index = searchCompanyNif(*companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
-    
-    for (i = 0; i < companies->company[index].commentsCounter; i++) {
+    int i, index = searchCompanyNif(*companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
+
+    if (index != -1) {
         if (companies->company[index].commentsCounter == 0) {
-            if (index != -1) {
-                for (j = index; j < companies->companiesCounter - 1; j++) {
-                    companies->company[j] = companies->company[j + 1];
-                }
-
-                deleteCompanyData(&companies->company[j]);
-
-                companies->companiesCounter--;
-            } else {
-                puts(ERROR_COMPANY_DOES_NOT_EXIST);
-                return;
+            for (i = index; i < companies->companiesCounter - 1; i++) {
+                companies->company[i] = companies->company[i + 1];
             }
+
+            deleteCompanyData(&companies->company[i]);
+
+            companies->companiesCounter--;
         } else {
             companies->company[index].status = INATIVO;
         }
-    } 
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+        return;
+    }
 }
 
 void deleteCompanyName(Companies *companies, char *filename) {
     char tmpName[MAX_NAME];
-    int index, i, j;
+    int index, i;
     
     puts(MSG_GET_NAME);
     if (scanf("%s", tmpName) != NULL) {
@@ -384,28 +382,27 @@ void deleteCompanyName(Companies *companies, char *filename) {
     
     index = searchCompanyName(*companies, tmpName);
     
-    for (i = 0; j < companies->company[index].commentsCounter; i++) {
-        if (companies->company[index].commentsCounter == 0 == 0) {
-            if (index != -1) {
-                for (j = index; j < companies->companiesCounter - 1; j++) {
-                    companies->company[j] = companies->company[j + 1];
-                }
-
-                deleteCompanyData(&companies->company[j]);
-
-                companies->companiesCounter--;
-            } else {
-                puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    if (index != -1) {
+        if (companies->company[index].commentsCounter == 0) {
+            for (i = index; i < companies->companiesCounter - 1; i++) {
+                companies->company[i] = companies->company[i + 1];
             }
+
+            deleteCompanyData(&companies->company[i]);
+
+            companies->companiesCounter--;
         } else {
             companies->company[index].status = INATIVO;
         }
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+        return;
     }
 }
 
 void deleteCompanyLocation(Companies *companies, char *filename) {
     char tempLocation[MAX_NAME];
-    int index, i, j;
+    int index, i;
 
     puts(MSG_GET_NAME);
     if (scanf("%s", tempLocation) != NULL) {
@@ -419,22 +416,21 @@ void deleteCompanyLocation(Companies *companies, char *filename) {
     
     index = searchCompanyLocation(*companies, tempLocation);
     
-    for (i = 0; j < companies->company[index].commentsCounter; i++) {
+    if (index != -1) {
         if (companies->company[index].commentsCounter == 0) {
-            if (index != -1) {
-                for (j = index; j < companies->companiesCounter - 1; j++) {
-                    companies->company[j] = companies->company[j + 1];
-                }
-
-                deleteCompanyData(&companies->company[j]);
-
-                companies->companiesCounter--;
-            } else {
-                puts(ERROR_COMPANY_DOES_NOT_EXIST);
+            for (i = index; i < companies->companiesCounter - 1; i++) {
+                companies->company[i] = companies->company[i + 1];
             }
+
+            deleteCompanyData(&companies->company[i]);
+
+            companies->companiesCounter--;
         } else {
             companies->company[index].status = INATIVO;
         }
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+        return;
     }
 }
 
@@ -542,7 +538,7 @@ void createCommentLocation(Companies *companies) {
 }
 
 void createClassificationNif(Companies *companies) {
-    int rating, nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
+    int nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     int index = searchCompanyNif(*companies, nif);
     
     int *pRating;
@@ -557,8 +553,7 @@ void createClassificationNif(Companies *companies) {
     }
         
     if (index != -1) {     
-        companies->company[index].classification[companies->company->classificationCounter] = getInt(MIN_RATING, MAX_RATING, MSG_GET_RATING);
-        companies->company[index].classification[companies->company->classificationCounter] = rating;
+        companies->company[index].classification += getInt(MIN_RATING, MAX_RATING, MSG_GET_RATING);
         
         companies->company->classificationCounter++;
     } else {
@@ -595,7 +590,7 @@ void createClassificationName(Companies *companies) {
     
     
     if (index != -1) {
-        companies->company[index].classification[companies->company->classificationCounter] = getInt(MIN_RATING, MAX_RATING, MSG_GET_RATING);
+        companies->company[index].classification = getInt(MIN_RATING, MAX_RATING, MSG_GET_RATING);
         
         companies->company->classificationCounter++;
     } else {
@@ -632,7 +627,7 @@ void createClassificationLocation(Companies *companies) {
     
     
     if (index != -1) {
-        companies->company[index].classification[companies->company->classificationCounter] = getInt(MIN_RATING, MAX_RATING, MSG_GET_RATING);
+        companies->company[index].classification = getInt(MIN_RATING, MAX_RATING, MSG_GET_RATING);
         
     companies->company->classificationCounter++;
     } else {
@@ -640,36 +635,27 @@ void createClassificationLocation(Companies *companies) {
     }
 }
 
-void calculateAverageRating(Companies *companies) {
-    int i, j;
-
-    for (i = 0; i < companies->companiesCounter; i++) {
-        int sum = 0;
-        if (companies->company[i].classificationCounter > 0) {
-            for (j = 0; j < companies->company[i].classificationCounter; j++) {
-                sum += companies->company[i].classification[j];
-            }
-            companies->company[i].averageRating = (float)sum / companies->company[i].classificationCounter;
-        } else {
-            companies->company[i].averageRating = 0.0;
-        }
+float calculateAverageRating(Company *company) {
+    if (company->classificationCounter > 0) {
+        return (float) company->classification / company->classificationCounter;
     }
+    return 0; 
 }
 
 void listCommentsTitle(Company company) {
     int i;
     
     for (i = 0; i < company.commentsCounter; i++) {
-        printf("%d - %s", i, company.comments[i].title);
+        printf("%d - %s\n", i, company.comments[i].title);
     }
 }
 
-void deleteCommentsData(Company *company) {
-    strcpy(company->comments->email, "");
-    strcpy(company->comments->text, "");
-    strcpy(company->comments->title, "");
-    strcpy(company->comments->username, "");
-    company->comments->status = INATIVO;
+void deleteCommentsData(Company company, int index) {
+    strcpy(company.comments[index].email, "");
+    strcpy(company.comments[index].text, "");
+    strcpy(company.comments[index].title, "");
+    strcpy(company.comments[index].username, "");
+    company.comments[index].status = INATIVO;
 }
 
 void manageCommentsNif(Companies *companies) {
@@ -677,29 +663,34 @@ void manageCommentsNif(Companies *companies) {
     int option1, option2, i;
 
     if (value != -1) {
-        puts("Select the title of the comment to hide/delete: ");
-        listCommentsTitle(companies->company[value]);
-        scanf("%d", &option1);
+        if (companies->company[value].commentsCounter > 0) {
+            puts("Select the title of the comment to hide/delete: ");
+            listCommentsTitle(companies->company[value]);
+            scanf("%d", &option1);
         
-        puts("Choose what you want to do: ");
-        puts("0- Delete Comment");
-        puts("1- Hide Comment");
-        scanf("%d", &option2);
-        
-        switch (option2) {
-            case 0:
-                for (i = 0; i < companies->company->commentsCounter; i++) {
-                    companies->company[value].comments[i] = companies->company[value].comments[i + 1];
-                }
-                
-                deleteCommentsData(&companies->company[value].comments[i]);
-                
-                companies->company[value].commentsCounter--;
-                break;
-            case 1:
-                companies->company[value].comments[option2].status = INATIVO;
+            puts("Choose what you want to do: ");
+            puts("0- Delete Comment");
+            puts("1- Hide Comment");
+            scanf("%d", &option2);
+
+            switch (option2) {
+                case 0:
+                    for (i = option1; i < companies->company[value].commentsCounter; i++) {
+                        companies->company[value].comments[i] = companies->company[value].comments[i + 1];
+                    }
+
+                    deleteCommentsData(companies->company[value], option1);
+
+                    companies->company[value].commentsCounter--;
+                    break;
+                case 1:
+                    companies->company[value].comments[option1].status = INATIVO;
+                    break;
+            }
+        } else {
+            puts("There is no comments to hide/delete.");
         }
-            } else {
+    } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
 }
@@ -732,11 +723,11 @@ void manageCommetsName(Companies *companies) {
         
         switch (option2) {
             case 0:
-                for (i = 0; i < companies->company->commentsCounter; i++) {
+                for (i = 0; i < companies->company[value].commentsCounter; i++) {
                     companies->company[value].comments[i] = companies->company[value].comments[i + 1];
                 }
                 
-                deleteCommentsData(&companies->company[value].comments[i]);
+                deleteCommentsData(companies->company[value], option1);
                 
                 companies->company[value].commentsCounter--;
                 break;
@@ -777,11 +768,11 @@ void manageCommentsLocation(Companies *companies) {
         
         switch (option2) {
             case 0:
-                for (i = 0; i < companies->company->commentsCounter; i++) {
+                for (i = 0; i < companies->company[value].commentsCounter; i++) {
                     companies->company[value].comments[i] = companies->company[value].comments[i + 1];
                 }
                 
-                deleteCommentsData(&companies->company[value].comments[i]);
+                deleteCommentsData(companies->company[value], option1);
                 
                 companies->company[value].commentsCounter--;
                 break;
@@ -818,7 +809,7 @@ void deleteBranch(Companies *companies, BranchActivity *branch) {
         for (i = 0; i < branch->branchCounter; i++) {
             if (strcmp(companies->company[i].branch, branch->branch[value].branch) == 0) {
                 puts("You cannot delete this branch of activity. You can only change the branch status for INACTIVE");
-                branch[value].status = INATIVO;
+                branch->branch[value].status = ATIVO;
             } else {
                 for (j = value; j < branch->branchCounter - 1; j++) {
                     strcpy(branch->branch[j].branch, branch->branch[j + 1].branch);
@@ -840,30 +831,34 @@ void loadCompaniesFromFile(Companies *companies, BranchActivity *branch, char *f
     FILE *fp = fopen(filename, "rb");
     if (fp != NULL) {
         fread(&companies->companiesCounter, sizeof(int), 1, fp);
+        fread(&branch->branchCounter, sizeof(int), 1, fp);
 
         if (companies->companiesCounter > 0) {
             companies->maxCompanies = companies->companiesCounter;
-            companies->company = (Company *)malloc(companies->companiesCounter * sizeof(Company));
+            companies->company = (Company *) malloc(companies->companiesCounter * sizeof(Company));
 
-            branch->maxBranch = companies->companiesCounter;
+            branch->maxBranch = branch->branchCounter > 7 ? branch->branchCounter * 2 : 7;
             branch->branch = (Branch *)malloc(branch->maxBranch * sizeof(Branch));
 
             for (i = 0; i < companies->maxCompanies; i++) {
                 fread(&companies->company[i], sizeof(Company), 1, fp);
 
-                companies->company[i].comments = (Comment *)malloc(companies->company[i].maxComments * sizeof(Comment));
-                
-                fread(companies->company[i].comments, sizeof(Comment), companies->company[i].maxComments, fp);
+                companies->company[i].comments = (Comment *)malloc(companies->company[i].commentsCounter * sizeof(Comment));
 
-                
-                fread(branch->branch[i].branch, sizeof(char), branch->maxBranch, fp);
+                fread(companies->company[i].comments, sizeof(Comment), companies->company[i].commentsCounter, fp);
+
+                fread(branch->branch[i].branch, sizeof(char), MAX_BRANCH, fp);
+                fread(&branch->branch[i].status, sizeof(Status), 1, fp);
 
                 printf("Index: %d\n", i);
                 printf("%u [NIF]\n", companies->company[i].nif);
                 printf("%s [name]\n", companies->company[i].name);
                 printf("%s [location]\n", companies->company[i].location);
                 printf("%s [Branch]\n", branch->branch[i].branch);
+                printf("Status empresa: %d\n", companies->company[i].status);
+                printf("Status branches: %d\n", branch->branch[i].status);
             }
+
 
             success = 1;
         }
@@ -872,12 +867,13 @@ void loadCompaniesFromFile(Companies *companies, BranchActivity *branch, char *f
     }
 
     if (!success) {
-        fp = fopen(filename, "wb");
-        if (fp != NULL) {
-            companies->company = (Company *)malloc(companies->maxCompanies * sizeof(Company));
-            branch->branch = (Branch *)malloc(branch->maxBranch * sizeof(Branch));
-        }
-        fclose(fp);
+        companies->maxCompanies = 10;
+        companies->company = (Company *)malloc(companies->maxCompanies * sizeof(Company));
+        companies->companiesCounter = 0;
+
+        branch->maxBranch = 7;
+        branch->branch = (Branch *)malloc(branch->maxBranch * sizeof(Branch));
+        branch->branchCounter = 0;
     }
 }
 
@@ -893,9 +889,12 @@ void saveCompanies(Companies *companies, BranchActivity *branch, char *filename)
     fwrite(&branch->branchCounter, sizeof(int), 1, fp);
 
     for (i = 0; i < companies->companiesCounter; i++) {
-        fwrite(&companies->company[i].commentsCounter, sizeof(int), 1, fp);
         fwrite(&companies->company[i], sizeof(Company), 1, fp);
-        fwrite(companies->company[i].comments, sizeof(Comment), companies->company[i].maxComments, fp);
+
+        fwrite(companies->company[i].comments, sizeof(Comment), companies->company[i].commentsCounter, fp);
+
+        fwrite(branch->branch[i].branch, sizeof(char), MAX_BRANCH, fp);
+        fwrite(&branch->branch[i].status, sizeof(Status), 1, fp);
     }
 
     fclose(fp);
@@ -904,15 +903,15 @@ void saveCompanies(Companies *companies, BranchActivity *branch, char *filename)
 
 
 
-void listHigherCompanies(Companies *companies, BranchActivity *branch) {
-    calculateAverageRating(companies);
-    
+
+
+void listHigherCompanies(Companies *companies, Branch *branch) { 
     if (companies->companiesCounter > 0) {
         int i;
         for (i = 0; i < companies->companiesCounter; i++) {
-            if (companies->company[i].averageRating > 4.5) {
+            if (calculateAverageRating(&companies->company[i]) > 4.5) {
                 printCompany(companies->company[i], *branch);
-                printf("Average rating: %.2f", companies->company[i].averageRating);
+                printf("Average rating: %.2f\n", calculateAverageRating(&companies->company[i]));
             }
         }
 
@@ -939,7 +938,6 @@ void freeCompanies(Companies *companies, BranchActivity *branch) {
 void listComments(Company company) {
     for (int i = 0; i < company.commentsCounter; i++) {
         printf("\nUsername: %s\n", company.comments[i].username);
-        printf("Email: %s\n", company.comments[i].email);
         printf("Title: %s\n", company.comments[i].title);
         printf("Comment: %s\n", company.comments[i].text);
     }
@@ -976,7 +974,7 @@ void listMostCompanies(Companies companies, int sizeOfTop) {
 
         for (int i = 0; i < size; i++) {
             printf("The %d company name is : %s \n", i + 1, companies.company[array[i]].name);
-            printf("Average Rating: %.2f\n", companies.company[array[i]].averageRating);
+            printf("Average Rating: %.2f\n", calculateAverageRating(&companies.company[i]));
             listComments(companies.company[array[i]]);
         }
     }
