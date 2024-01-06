@@ -404,7 +404,7 @@ void deleteCompanyLocation(Companies *companies, char *filename) {
     char tempLocation[MAX_NAME];
     int index, i;
 
-    puts(MSG_GET_NAME);
+    puts(MSG_GET_LOCATION);
     if (scanf("%s", tempLocation) != NULL) {
         unsigned int len = strlen(tempLocation) - 1;
         if (tempLocation[len] == '\n') {
