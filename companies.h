@@ -66,6 +66,7 @@ extern "C" {
 #define ERROR_COMPANY_ALREADY_EXIST "Error! Company already exists!"
 #define ERROR_EMPY_LIST "Error! The list of companies is empty!"    
 #define ERROR_CREATE_BRANCH "Error: The list of branches of activity is empty. Please create at least one line of business to create a company."    
+#define ERROR_INVALID_EMAIL "Error: Please, enter a valid email format."    
 
 
 typedef enum {

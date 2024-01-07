@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 
 const char *convertTypeCategory(Category category) {
@@ -25,6 +26,28 @@ const char *convertTypeStatus(Status status) {
             return "Ativo";
     }
 }
+
+int emailVerification(Comment *comment) {
+    char *atSymbol = strchr(comment->email, '@');
+    char *dotSymbol = strchr(comment->email, '.');
+
+    if (atSymbol == NULL || dotSymbol == NULL || atSymbol > dotSymbol) {
+        puts(ERROR_INVALID_EMAIL);
+        
+        strcpy(comment->email, "");
+        return -1;
+    }
+    return 1;
+}
+
+//int postalCodeVerification(Company *company) {
+//    int i;
+//    for (i = 0; i < 3; i++) {
+//        if (company->postalCode[i] > 49 && company->postalCode[i] < 57)
+//            
+//    }
+//
+//}
 
 int searchCompanyNif(Companies companies, int number) {
     int i;
@@ -199,7 +222,7 @@ int insertCompany(Companies *companies, BranchActivity *branch) {
             company->companyCategory = getInt(MIN_CATEGORY, MAX_CATEGORY, MSG_GET_CATEGORY);
             company->status = ATIVO;
             
-            company->maxComments = 3;
+            company->maxComments = 5;
             company->commentsCounter = 0;
             company->comments = (Comment *) malloc(company->maxComments * sizeof(Comment));
             
@@ -445,27 +468,31 @@ void deleteCompanyLocation(Companies *companies, char *filename) {
 void createCommentNif(Companies *companies) {
     int value = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     int index = searchCompanyNif(*companies, value);
-    
-    Company *pComment = &companies->company[index].comments;
-    
-    if (companies->company[index].commentsCounter == companies->company[index].maxComments) {
-        pComment = (Comment *) realloc(companies->company[index].comments, companies->company[index].maxComments * 2 * sizeof(Comment));
-    }
-    
-    if (pComment != NULL ) {
-            companies->company[index].maxComments *= 2;
-            companies->company[index].comments = pComment;
-        }
-    
+    Comment *pComment = &companies->company[index].comments;
     
     if (index != -1) {
-        readString(companies->company[index].comments[companies->company->commentsCounter].email, MAX_EMAIL, MSG_GET_EMAIL);
-        readString(companies->company[index].comments[companies->company->commentsCounter].username, MAX_USERNAME, MSG_GET_USER);
-        readString(companies->company[index].comments[companies->company->commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
-        readString(companies->company[index].comments[companies->company->commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
-        companies->company[index].comments[companies->company->commentsCounter].status = ATIVO;
-    
+        if (companies->company[index].commentsCounter == companies->company[index].maxComments) {
+            pComment = (Comment *) realloc(companies->company[index].comments, companies->company[index].maxComments * 2 * sizeof(Comment));
+        
+            if (pComment != NULL ) {
+                companies->company[index].maxComments *= 2;
+                companies->company[index].comments = pComment;
+            }
+        }
+        
+        Comment *pComment = &companies->company[index].comments[companies->company[index].commentsCounter];
+        do {
+            readString(pComment->email, MAX_EMAIL, MSG_GET_EMAIL);
+        } while (emailVerification(pComment) == -1);
+        
+        readString(pComment->username, MAX_USERNAME, MSG_GET_USER);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
+        companies->company[index].comments[companies->company[index].commentsCounter].status = ATIVO;
+        
         companies->company[index].commentsCounter++;
+
+       
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -483,23 +510,30 @@ void createCommentName(Companies *companies) {
     
     Company *pComment = &companies->company[index].comments;
     
-    if (companies->company[index].commentsCounter == companies->company[index].maxComments) {
-        pComment = (Comment *) realloc(companies->company[index].comments, companies->company[index].maxComments * 2 * sizeof(Comment));
-    }
-    
-    if (pComment != NULL ) {
-            companies->company[index].maxComments *= 2;
-            companies->company[index].comments = pComment;
-        }
-    
-    
     if (index != -1) {
-        readString(companies->company[index].comments[companies->company->commentsCounter].email, MAX_EMAIL, MSG_GET_EMAIL);
-        readString(companies->company[index].comments[companies->company->commentsCounter].username, MAX_USERNAME, MSG_GET_USER);
-        readString(companies->company[index].comments[companies->company->commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
-        readString(companies->company[index].comments[companies->company->commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
-    
+        if (companies->company[index].commentsCounter == companies->company[index].maxComments) {
+            pComment = (Comment *) realloc(companies->company[index].comments, companies->company[index].maxComments * 2 * sizeof(Comment));
+        
+            if (pComment != NULL ) {
+                companies->company[index].maxComments *= 2;
+                companies->company[index].comments = pComment;
+            }
+        }
+        
+        Comment *pComment = &companies->company[index].comments[companies->company[index].commentsCounter];
+        
+        do {
+            readString(pComment->email, MAX_EMAIL, MSG_GET_EMAIL);
+        } while (emailVerification(pComment) == -1);
+        
+        readString(pComment->username, MAX_USERNAME, MSG_GET_USER);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
+        companies->company[index].comments[companies->company[index].commentsCounter].status = ATIVO;
+        
         companies->company[index].commentsCounter++;
+        
+        
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -523,23 +557,30 @@ void createCommentLocation(Companies *companies) {
     
     Company *pComment = &companies->company[index].comments;
     
-    if (companies->company[index].commentsCounter == companies->company[index].maxComments) {
-        pComment = (Comment *) realloc(companies->company[index].comments, companies->company[index].maxComments * 2 * sizeof(Comment));
-    }
-    
-    if (pComment != NULL ) {
-            companies->company[index].maxComments *= 2;
-            companies->company[index].comments = pComment;
-        }
-    
-    
     if (index != -1) {
-    readString(companies->company[index].comments[companies->company->commentsCounter].email, MAX_EMAIL, MSG_GET_EMAIL);
-    readString(companies->company[index].comments[companies->company->commentsCounter].username, MAX_USERNAME, MSG_GET_USER);
-    readString(companies->company[index].comments[companies->company->commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
-    readString(companies->company[index].comments[companies->company->commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
-    
-    companies->company[index].commentsCounter++;
+        if (companies->company[index].commentsCounter == companies->company[index].maxComments) {
+            pComment = (Comment *) realloc(companies->company[index].comments, companies->company[index].maxComments * 2 * sizeof(Comment));
+        
+            if (pComment != NULL ) {
+                companies->company[index].maxComments *= 2;
+                companies->company[index].comments = pComment;
+            }
+        }
+        
+        Comment *pComment = &companies->company[index].comments[companies->company[index].commentsCounter];
+        
+        do {
+            readString(pComment->email, MAX_EMAIL, MSG_GET_EMAIL);
+        } while (emailVerification(pComment) == -1);
+        
+        readString(pComment->username, MAX_USERNAME, MSG_GET_USER);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
+        companies->company[index].comments[companies->company[index].commentsCounter].status = ATIVO;
+        
+        companies->company[index].commentsCounter++;
+        
+        
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -625,12 +666,12 @@ void listCommentsTitle(Company company) {
     }
 }
 
-void deleteCommentsData(Company company, int index) {
-    strcpy(company.comments[index].email, "");
-    strcpy(company.comments[index].text, "");
-    strcpy(company.comments[index].title, "");
-    strcpy(company.comments[index].username, "");
-    company.comments[index].status = INATIVO;
+void deleteCommentsData(Company *company, int index) {
+    strcpy(company->comments[index].email, "");
+    strcpy(company->comments[index].text, "");
+    strcpy(company->comments[index].title, "");
+    strcpy(company->comments[index].username, "");
+    company->comments[index].status = INATIVO;
 }
 
 void manageCommentsNif(Companies *companies) {
@@ -642,7 +683,7 @@ void manageCommentsNif(Companies *companies) {
             puts("Select the title of the comment to hide/delete: ");
             listCommentsTitle(companies->company[value]);
             scanf("%d", &option1);
-        
+
             puts("Choose what you want to do: ");
             puts("0- Delete Comment");
             puts("1- Hide Comment");
@@ -650,16 +691,24 @@ void manageCommentsNif(Companies *companies) {
 
             switch (option2) {
                 case 0:
-                    for (i = option1; i < companies->company[value].commentsCounter; i++) {
-                        companies->company[value].comments[i] = companies->company[value].comments[i + 1];
+                    if (option1 >= 0 && option1 < companies->company[value].commentsCounter) {
+                        for (i = option1; i < companies->company[value].commentsCounter - 1; i++) {
+                            companies->company[value].comments[i] = companies->company[value].comments[i + 1];
+                        }
+
+                        deleteCommentsData(&companies->company[value], companies->company[value].commentsCounter - 1);
+
+                        companies->company[value].commentsCounter--;
+                    } else {
+                        puts("Invalid comment index.");
                     }
-
-                    deleteCommentsData(companies->company[value], option1);
-
-                    companies->company[value].commentsCounter--;
                     break;
                 case 1:
-                    companies->company[value].comments[option1].status = INATIVO;
+                    if (option1 >= 0 && option1 < companies->company[value].commentsCounter) {
+                        companies->company[value].comments[option1].status = INATIVO;
+                    } else {
+                        puts("Invalid comment index.");
+                    }
                     break;
             }
         } else {
@@ -687,29 +736,41 @@ void manageCommetsName(Companies *companies) {
     int value = searchCompanyName(*companies, tempName);
 
     if (value != -1) {
-        puts("Select the title of the comment to hide/delete: ");
-        listCommentsTitle(companies->company[value]);
-        scanf("%d", &option1);
-        
-        puts("Choose what you want to do: ");
-        puts("0- Delete Comment");
-        puts("1- Hide Comment");
-        scanf("%d", &option2);
-        
-        switch (option2) {
-            case 0:
-                for (i = 0; i < companies->company[value].commentsCounter; i++) {
-                    companies->company[value].comments[i] = companies->company[value].comments[i + 1];
-                }
-                
-                deleteCommentsData(companies->company[value], option1);
-                
-                companies->company[value].commentsCounter--;
-                break;
-            case 1:
-                companies->company[value].comments[option2].status = INATIVO;
+        if (companies->company[value].commentsCounter > 0) {
+            puts("Select the title of the comment to hide/delete: ");
+            listCommentsTitle(companies->company[value]);
+            scanf("%d", &option1);
+
+            puts("Choose what you want to do: ");
+            puts("0- Delete Comment");
+            puts("1- Hide Comment");
+            scanf("%d", &option2);
+
+            switch (option2) {
+                case 0:
+                    if (option1 >= 0 && option1 < companies->company[value].commentsCounter) {
+                        for (i = option1; i < companies->company[value].commentsCounter - 1; i++) {
+                            companies->company[value].comments[i] = companies->company[value].comments[i + 1];
+                        }
+
+                        deleteCommentsData(&companies->company[value], companies->company[value].commentsCounter - 1);
+
+                        companies->company[value].commentsCounter--;
+                    } else {
+                        puts("Invalid comment index.");
+                    }
+                    break;
+                case 1:
+                    if (option1 >= 0 && option1 < companies->company[value].commentsCounter) {
+                        companies->company[value].comments[option1].status = INATIVO;
+                    } else {
+                        puts("Invalid comment index.");
+                    }
+                    break;
+            }
+        } else {
+            puts("There is no comments to hide/delete.");
         }
-        
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -732,29 +793,41 @@ void manageCommentsLocation(Companies *companies) {
     int value = searchCompanyLocation(*companies, tempLocation);
 
     if (value != -1) {
-        puts("Select the title of the comment to hide/delete: ");
-        listCommentsTitle(companies->company[value]);
-        scanf("%d", &option1);
-        
-        puts("Choose what you want to do: ");
-        puts("0- Delete Comment");
-        puts("1- Hide Comment");
-        scanf("%d", &option2);
-        
-        switch (option2) {
-            case 0:
-                for (i = 0; i < companies->company[value].commentsCounter; i++) {
-                    companies->company[value].comments[i] = companies->company[value].comments[i + 1];
-                }
-                
-                deleteCommentsData(companies->company[value], option1);
-                
-                companies->company[value].commentsCounter--;
-                break;
-            case 1:
-                companies->company[value].comments[option2].status = INATIVO;
+        if (companies->company[value].commentsCounter > 0) {
+            puts("Select the title of the comment to hide/delete: ");
+            listCommentsTitle(companies->company[value]);
+            scanf("%d", &option1);
+
+            puts("Choose what you want to do: ");
+            puts("0- Delete Comment");
+            puts("1- Hide Comment");
+            scanf("%d", &option2);
+
+            switch (option2) {
+                case 0:
+                    if (option1 >= 0 && option1 < companies->company[value].commentsCounter) {
+                        for (i = option1; i < companies->company[value].commentsCounter - 1; i++) {
+                            companies->company[value].comments[i] = companies->company[value].comments[i + 1];
+                        }
+
+                        deleteCommentsData(&companies->company[value], companies->company[value].commentsCounter - 1);
+
+                        companies->company[value].commentsCounter--;
+                    } else {
+                        puts("Invalid comment index.");
+                    }
+                    break;
+                case 1:
+                    if (option1 >= 0 && option1 < companies->company[value].commentsCounter) {
+                        companies->company[value].comments[option1].status = INATIVO;
+                    } else {
+                        puts("Invalid comment index.");
+                    }
+                    break;
+            }
+        } else {
+            puts("There is no comments to hide/delete.");
         }
-        
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
@@ -842,20 +915,22 @@ void loadData(Companies *companies, BranchActivity *branch, char *filename) {
     fread(companies, sizeof(Companies), 1, fp);
     fread(branch, sizeof(BranchActivity), 1, fp);
 
-    companies->company = (Company *)malloc(companies->maxCompanies * sizeof(Company));
+    companies->company = (Company *) malloc(companies->maxCompanies * sizeof(Company));
 
-    branch->branch = (Branch *)malloc(branch->maxBranch * sizeof(Branch));
+    branch->branch = (Branch *) malloc(branch->maxBranch * sizeof(Branch));
 
     for (int i = 0; i < companies->companiesCounter; i++) {
         fread(&companies->company[i], sizeof(Company), 1, fp);
         fread(&branch->branch[i], sizeof(Branch), 1, fp);
         
-        companies->company[i].comments = (Comment *)malloc(companies->company[i].maxComments * sizeof(Comment));
+        companies->company[i].comments = (Comment *) malloc(companies->company[i].maxComments * sizeof(Comment));
         fread(companies->company[i].comments, sizeof(Comment), companies->company[i].commentsCounter, fp);
         
         printf("%s [NOME]\n", companies->company[i].name);
         printf("%d [NIF]\n", companies->company[i].nif);
         printf("%s [BRANCH]\n", companies->company[i].branch);
+        printf("%d [COMPANY STATUS]\n", companies->company[i].status);
+        printf("%d [BRANCH STATUS]\n", branch->branch[i].status);
     }
 
     fclose(fp);

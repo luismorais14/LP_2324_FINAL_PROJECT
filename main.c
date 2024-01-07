@@ -32,7 +32,6 @@ int main(int argc, char** argv) {
 
     loadData(&companies, &branch, FILENAME);
     
-    
     mainMenu(&companies, &branch, FILENAME);
 
     saveData(&companies, &branch, FILENAME);
