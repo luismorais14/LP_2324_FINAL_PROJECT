@@ -4,8 +4,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <ctype.h>
-
 
 const char *convertTypeCategory(Category category) {
     switch (category) {
@@ -40,14 +40,12 @@ int emailVerification(Comment *comment) {
     return 1;
 }
 
-//int postalCodeVerification(Company *company) {
-//    int i;
-//    for (i = 0; i < 3; i++) {
-//        if (company->postalCode[i] > 49 && company->postalCode[i] < 57)
-//            
-//    }
-//
-//}
+int postalCodeVerification(char *zipCode) {
+    if (strlen(zipCode) == 8 && isdigit(zipCode[0]) && isdigit(zipCode[1]) && isdigit(zipCode[2]) && isdigit(zipCode[3]) && zipCode[4] == '-' && isdigit(zipCode[5]) && isdigit(zipCode[6]) && isdigit(zipCode[7])) {
+        return 0;
+    }
+    return -1;
+}
 
 int searchCompanyNif(Companies companies, int number) {
     int i;
@@ -195,7 +193,7 @@ void createActivity(BranchActivity *branch) {
 }
 
 int insertCompany(Companies *companies, BranchActivity *branch) {
-    int nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
+    int verification, nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     char tmpBranch[MAX_BRANCH];
 
     Company *company = &companies->company[companies->companiesCounter];
@@ -214,8 +212,19 @@ int insertCompany(Companies *companies, BranchActivity *branch) {
         if (searchCompanyNif(*companies, nif) == -1) {
             company->nif = nif;
             readString(company->name, MAX_NAME, MSG_GET_NAME);
-            readString(company->adress, MAX_ADRESS, MSG_GET_ADRESS);
-            readString(company->postalCode, MAX_POSTAL_CODE, MSG_GET_POSTAL_CODE);
+            readString(company->adress, MAX_ADRESS, MSG_GET_ADRESS); 
+            do {
+                readString(company->postalCode, MAX_POSTAL_CODE, MSG_GET_POSTAL_CODE);
+
+                size_t len = strlen(company->postalCode);
+
+                if (len > 0 && company->postalCode[len - 1] == '\n') {
+                    company->postalCode[len - 1] = '\0';
+                }
+
+                verification = postalCodeVerification(company->postalCode);
+            } while (verification == -1);
+       
             readString(company->location, MAX_LOCATION, MSG_GET_LOCATION);
             selectBranch(branch, tmpBranch);
             strcpy(company->branch, tmpBranch);
@@ -246,13 +255,24 @@ void insertCompanies(Companies *company, BranchActivity *branch, char *filename)
 }  
 
 void updateCompany(Company *company, BranchActivity *branch, char *filename) {
-    int nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
+    int verification, nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     char tmpBranch[MAX_BRANCH];
     
     company->nif = nif;
     readString((*company).name, MAX_NAME, MSG_GET_NAME);
     readString((*company).adress, MAX_ADRESS, MSG_GET_ADRESS);
-    readString((*company).postalCode, MAX_POSTAL_CODE, MSG_GET_POSTAL_CODE);
+    do {
+        readString(company->postalCode, MAX_POSTAL_CODE, MSG_GET_POSTAL_CODE);
+
+        size_t len = strlen(company->postalCode);
+
+        if (len > 0 && company->postalCode[len - 1] == '\n') {
+            company->postalCode[len - 1] = '\0';
+        }
+
+        verification = postalCodeVerification(company->postalCode);
+    } while (verification == -1);
+    
     readString((*company).location, MAX_LOCATION, MSG_GET_LOCATION);
     selectBranch(*branch, tmpBranch);
     strcpy((*company).branch, tmpBranch);
@@ -479,11 +499,10 @@ void createCommentNif(Companies *companies) {
                 companies->company[index].comments = pComment;
             }
         }
-        
-        Comment *pComment = &companies->company[index].comments[companies->company[index].commentsCounter];
+      
         do {
             readString(pComment->email, MAX_EMAIL, MSG_GET_EMAIL);
-        } while (emailVerification(pComment) == -1);
+        } while (emailVerification(&companies->company[index].comments[companies->company[index].commentsCounter]) == -1);
         
         readString(pComment->username, MAX_USERNAME, MSG_GET_USER);
         readString(companies->company[index].comments[companies->company[index].commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
@@ -519,14 +538,12 @@ void createCommentName(Companies *companies) {
                 companies->company[index].comments = pComment;
             }
         }
-        
-        Comment *pComment = &companies->company[index].comments[companies->company[index].commentsCounter];
-        
+                
         do {
-            readString(pComment->email, MAX_EMAIL, MSG_GET_EMAIL);
-        } while (emailVerification(pComment) == -1);
+            readString(companies->company[index].comments[companies->company[index].commentsCounter].email, MAX_EMAIL, MSG_GET_EMAIL);
+        } while (emailVerification(&companies->company[index].comments[companies->company[index].commentsCounter]) == -1);
         
-        readString(pComment->username, MAX_USERNAME, MSG_GET_USER);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].username, MAX_USERNAME, MSG_GET_USER);
         readString(companies->company[index].comments[companies->company[index].commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
         readString(companies->company[index].comments[companies->company[index].commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
         companies->company[index].comments[companies->company[index].commentsCounter].status = ATIVO;
@@ -567,13 +584,11 @@ void createCommentLocation(Companies *companies) {
             }
         }
         
-        Comment *pComment = &companies->company[index].comments[companies->company[index].commentsCounter];
-        
         do {
-            readString(pComment->email, MAX_EMAIL, MSG_GET_EMAIL);
-        } while (emailVerification(pComment) == -1);
+            readString(companies->company[index].comments[companies->company[index].commentsCounter].email, MAX_EMAIL, MSG_GET_EMAIL);
+        } while (emailVerification(&companies->company[index].comments[companies->company[index].commentsCounter]) == -1);
         
-        readString(pComment->username, MAX_USERNAME, MSG_GET_USER);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].username, MAX_USERNAME, MSG_GET_USER);
         readString(companies->company[index].comments[companies->company[index].commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
         readString(companies->company[index].comments[companies->company[index].commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
         companies->company[index].comments[companies->company[index].commentsCounter].status = ATIVO;

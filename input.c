@@ -62,14 +62,26 @@ char getChar(char *msg) {
     return value;
 }
 
-void readString(char *string, unsigned int lenth, char *msg) {
-    puts(msg);
-    if (fgets(string, lenth, stdin) != NULL) {
-        unsigned int len = strlen(string) - 1;
-        if (string[len] == '\n') {
-            string[len] = '\0';
-        } else {
-            cleanInputBuffer();
-        }
+void readString(char *string, unsigned int lenght, char *msg) {
+    char *tmpString = (char *) malloc(lenght * 2);
+    size_t len;
+    
+    if (tmpString == NULL) {
+        exit(EXIT_FAILURE);
     }
+    do {
+        puts(msg);
+        if (fgets(tmpString, lenght * 2, stdin) != NULL) {
+            len = strlen(tmpString) - 1;
+            if (tmpString[len] == '\n') {
+                tmpString[len] = '\0';
+            } else {
+                cleanInputBuffer();
+            }
+        }
+    } while (len > lenght);
+    
+    strcpy(string, tmpString);
+    
+    free(tmpString);
 }

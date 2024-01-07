@@ -29,7 +29,7 @@ extern "C" {
 #define MAX_LOCATION 30
 #define MSG_GET_LOCATION "Enter the company's location: "
 
-#define MAX_POSTAL_CODE 8
+#define MAX_POSTAL_CODE 9
 #define MSG_GET_POSTAL_CODE "Enter the company's Postal Code: "
 
 #define MAX_TITLE 40
