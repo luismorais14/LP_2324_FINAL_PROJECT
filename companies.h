@@ -124,9 +124,9 @@ typedef struct {
 
 void loadData(Companies *companies, BranchActivity *branch, char *filename);
 
-void companyNif(Companies companies, Branch branch);
-void companyName(Companies companies, Branch branch);
-void companyLocation(Companies companies, Branch branch);
+void companyNif(Companies companies, BranchActivity branchActivity);
+void companyName(Companies companies, BranchActivity branchActivity);
+void companyLocation(Companies companies, BranchActivity branchActivity);
 void createActivity(BranchActivity *branch);
 void printBranches(BranchActivity branch);
 void insertCompanies(Companies *company, BranchActivity *branch, char *filename);

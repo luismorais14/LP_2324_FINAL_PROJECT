@@ -15,7 +15,7 @@ void displaySearchMenu() {
     puts("Choose one of the options above: [1 - 4]");
 }
 
-void searchMenu(Companies *companies, Branch *branch) {
+void searchMenu(Companies *companies, BranchActivity *branchActivity) {
     int option;
 
     do {
@@ -24,13 +24,13 @@ void searchMenu(Companies *companies, Branch *branch) {
 
         switch (option) {
             case 1:
-                companyNif(*companies, *branch);
+                companyNif(*companies, *branchActivity);
                 break;
             case 2:
-                companyName(*companies, *branch);
+                companyName(*companies, *branchActivity);
                 break;
             case 3:
-                companyLocation(*companies, *branch);
+                companyLocation(*companies, *branchActivity);
                 break;
             case 4:
                 break;

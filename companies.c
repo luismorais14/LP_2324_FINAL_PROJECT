@@ -44,6 +44,7 @@ int postalCodeVerification(char *zipCode) {
     if (strlen(zipCode) == 8 && isdigit(zipCode[0]) && isdigit(zipCode[1]) && isdigit(zipCode[2]) && isdigit(zipCode[3]) && zipCode[4] == '-' && isdigit(zipCode[5]) && isdigit(zipCode[6]) && isdigit(zipCode[7])) {
         return 0;
     }
+    puts("Invalid postal code format. Please enter a new one.");
     return -1;
 }
 
@@ -93,57 +94,64 @@ void printCompany(Company company, Branch branch) {
 }
 
 
-void companyNif(Companies companies, Branch branch) {
+void companyNif(Companies companies, BranchActivity branchActivity) {
+    int index, i; 
     long long value = searchCompanyNif(companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
-
+ 
+    for (i = 0; i < branchActivity.branchCounter; i++) {
+        if (strcmp(companies.company[value].branch, branchActivity.branch[i].branch) == 0) {
+            index = i;
+        }
+    }
+    
     if (value != -1) {
-        printCompany(companies.company[value], branch);
+        printCompany(companies.company[value], branchActivity.branch[index]);
         companies.company[value].searchCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
 }
 
-void companyName(Companies companies, Branch branch) {
+void companyName(Companies companies, BranchActivity branchActivity) {
+    int index, i;
     char tempName[MAX_NAME];
 
-    puts(MSG_GET_NAME);
-    if (scanf("%s", tempName) != NULL) {
-        unsigned int len = strlen(tempName) - 1;
-        if (tempName[len] == '\n') {
-            tempName[len] = '\0';
-        } else {
-            cleanInputBuffer();
+    cleanInputBuffer();
+    readString(tempName, MAX_NAME, MSG_GET_NAME);
+
+    int value = searchCompanyName(companies, tempName);
+    
+    for (i = 0; i < branchActivity.branchCounter; i++) {
+        if (strcmp(companies.company[value].branch, branchActivity.branch[i].branch) == 0) {
+            index = i;
         }
     }
 
-    int value = searchCompanyName(companies, tempName);
-
     if (value != -1) {
-        printCompany(companies.company[value], branch);
+        printCompany(companies.company[value], branchActivity.branch[index]);
         companies.company[value].searchCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
 }
 
-void companyLocation(Companies companies, Branch branch) {
+void companyLocation(Companies companies, BranchActivity branchActivity) {
+    int index, i;
     char tempLocation[MAX_NAME];
 
-    puts(MSG_GET_NAME);
-    if (scanf("%s", tempLocation) != NULL) {
-        unsigned int len = strlen(tempLocation) - 1;
-        if (tempLocation[len] == '\n') {
-            tempLocation[len] = '\0';
-        } else {
-            cleanInputBuffer();
-        }
-    }
+    cleanInputBuffer();
+    readString(tempLocation, MAX_LOCATION, MSG_GET_LOCATION);
 
     int value = searchCompanyLocation(companies, tempLocation);
 
+    for (i = 0; i < branchActivity.branchCounter; i++) {
+        if (strcmp(companies.company[value].branch, branchActivity.branch[i].branch) == 0) {
+            index = i;
+        }
+    }
+    
     if (value != -1) {
-        printCompany(companies.company[value], branch);
+        printCompany(companies.company[value], branchActivity.branch[index]);
         companies.company[value].searchCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
@@ -848,9 +856,9 @@ void manageCommentsLocation(Companies *companies) {
     }
 }
 
-void deleteBranchData(Branch *branch) {
-    strcpy(branch->branch, "");
-}
+//void deleteBranchData(Branch *branch) {
+//    strcpy(branch->branch, "");
+//}
 
 int removeBranch(BranchActivity *branch) {
     int option;
@@ -867,26 +875,27 @@ int removeBranch(BranchActivity *branch) {
 
 void deleteBranch(Companies *companies, BranchActivity *branch) {
     if (branch->branchCounter > 0) {
-        int i, j, value = removeBranch(branch);
-    
-        for (i = 0; i < branch->branchCounter; i++) {
+        int value = removeBranch(branch);
+
+        for (int i = 0; i < companies->companiesCounter; i++) {
             if (strcmp(companies->company[i].branch, branch->branch[value].branch) == 0) {
-                puts("You cannot delete this branch of activity. You can only change the branch status for INACTIVE");
-                branch->branch[value].status = ATIVO;
-            } else {
-                for (j = value; j < branch->branchCounter - 1; j++) {
-                    strcpy(branch->branch[j].branch, branch->branch[j + 1].branch);
-                }
-    
-                deleteBranchData(&branch->branch[j]);
-    
-                branch->branchCounter--;
+                puts("You cannot delete this branch of activity. You can only change the branch status to INACTIVE.");
+                branch->branch[value].status = INATIVO;
+                return;
             }
         }
+
+        for (int j = value; j < branch->branchCounter - 1; j++) {
+            strcpy(branch->branch[j].branch, branch->branch[j + 1].branch);
+            branch->branch[j].status = branch->branch[j + 1].status;
+        }
+
+        branch->branchCounter--;
     } else {
-        puts("There are no branches of activity available for remove. Please create one first.");
+        puts("There are no branches of activity available for removal. Please create one first.");
     }
 }
+
 
 void saveData(Companies *companies, BranchActivity *branch, char *filename) {
     FILE *fp = fopen(filename, "wb");
@@ -941,11 +950,6 @@ void loadData(Companies *companies, BranchActivity *branch, char *filename) {
         companies->company[i].comments = (Comment *) malloc(companies->company[i].maxComments * sizeof(Comment));
         fread(companies->company[i].comments, sizeof(Comment), companies->company[i].commentsCounter, fp);
         
-        printf("%s [NOME]\n", companies->company[i].name);
-        printf("%d [NIF]\n", companies->company[i].nif);
-        printf("%s [BRANCH]\n", companies->company[i].branch);
-        printf("%d [COMPANY STATUS]\n", companies->company[i].status);
-        printf("%d [BRANCH STATUS]\n", branch->branch[i].status);
     }
 
     fclose(fp);
