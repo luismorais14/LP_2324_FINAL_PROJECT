@@ -108,7 +108,6 @@ typedef struct {
     Status status;
     int maxComments;
     int commentsCounter;
-    int maxClassification;
     int classificationCounter;
     int classification;
     Comment *comments;
@@ -122,7 +121,7 @@ typedef struct {
     Company *company;
 } Companies;
 
-void loadCompanyFromFile(Companies *, char*);
+void loadData(Companies *companies, BranchActivity *branch, char *filename);
 
 void companyNif(Companies companies, Branch branch);
 void companyName(Companies companies, Branch branch);
@@ -146,7 +145,7 @@ void manageCommetsName(Companies *companies);
 void manageCommentsLocation(Companies *companies);
 void deleteBranch(Companies *companies, BranchActivity *branch);
 void listHigherCompanies(Companies *companies, Branch *branch);
-void saveCompanies(Companies *companies, BranchActivity *branch, char *filename);
+void saveData(Companies *companies, BranchActivity *branch, char*);
 void freeMemory(Companies *companies, BranchActivity *branch);
 void listMostCompanies(Companies companies, int sizeOfTop);
 

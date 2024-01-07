@@ -19,18 +19,24 @@
  */
 
 int main(int argc, char** argv) { 
-    Companies companies;
+    Companies companies = {
+        .companiesCounter = 0,
+        .maxCompanies = 10
+    };
         
-    BranchActivity branch;
+    BranchActivity branch = {
+        .maxBranch = 7,
+        .branchCounter = 0
+    };
 
 
-    loadCompaniesFromFile(&companies, &branch, FILENAME);
+    loadData(&companies, &branch, FILENAME);
     
     
     mainMenu(&companies, &branch, FILENAME);
-    
-    saveCompanies(&companies, &branch, FILENAME);
 
+    saveData(&companies, &branch, FILENAME);
+    
     freeCompanies(&companies, &branch);
 
     puts("End.");
