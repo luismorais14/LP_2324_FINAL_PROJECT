@@ -38,7 +38,5 @@ int main(int argc, char** argv) {
     
     freeCompanies(&companies, &branch);
 
-    puts("End.");
-
     return (EXIT_SUCCESS);
 }
