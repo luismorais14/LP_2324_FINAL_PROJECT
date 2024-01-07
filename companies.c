@@ -71,6 +71,7 @@ void printCompany(Company company, Branch branch) {
     }
 }
 
+
 void companyNif(Companies companies, Branch branch) {
     long long value = searchCompanyNif(companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
 
