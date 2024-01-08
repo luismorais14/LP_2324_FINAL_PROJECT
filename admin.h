@@ -7,9 +7,6 @@
 extern "C" {
 #endif
 
-void companyNif(Companies companies, BranchActivity branchActivity);
-void companyName(Companies companies, BranchActivity branchActivity);
-void companyLocation(Companies companies, BranchActivity branchActivity);
 void createActivity(BranchActivity *branch);
 int insertCompany(Companies *companies, BranchActivity *branch);
 void insertCompanies(Companies *company, BranchActivity *branch);

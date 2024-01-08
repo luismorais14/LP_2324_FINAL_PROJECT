@@ -12,6 +12,9 @@
 extern "C" {
 #endif
 
+void companyNif(Companies companies, BranchActivity branchActivity);
+void companyName(Companies companies, BranchActivity branchActivity);
+void companyLocation(Companies companies, BranchActivity branchActivity);
 void selectBranch(BranchActivity *branch, char *selectedBranch);
 void createCommentNif(Companies *companies);
 void createCommentName(Companies *companies);

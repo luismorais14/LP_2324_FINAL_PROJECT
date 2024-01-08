@@ -15,6 +15,86 @@
 #include <ctype.h>
 
 /**
+ * @brief Display company information based on NIF.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
+void companyNif(Companies companies, BranchActivity branchActivity) {
+    int index, i; 
+    long long value = searchCompanyNif(companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
+ 
+    for (i = 0; i < branchActivity.branchCounter; i++) {
+        if (strcmp(companies.company[value].branch, branchActivity.branch[i].branch) == 0) {
+            index = i;
+        }
+    }
+    
+    if (value != -1) {
+        printCompany(companies.company[value], branchActivity.branch[index]);
+        companies.company[value].searchCounter++;
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+
+/**
+ * @brief Display company information based on name.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
+void companyName(Companies companies, BranchActivity branchActivity) {
+    int index, i;
+    char tempName[MAX_NAME];
+
+    cleanInputBuffer();
+    readString(tempName, MAX_NAME, MSG_GET_NAME);
+
+    int value = searchCompanyName(companies, tempName);
+    
+    for (i = 0; i < branchActivity.branchCounter; i++) {
+        if (strcmp(companies.company[value].branch, branchActivity.branch[i].branch) == 0) {
+            index = i;
+        }
+    }
+
+    if (value != -1) {
+        printCompany(companies.company[value], branchActivity.branch[index]);
+        companies.company[value].searchCounter++;
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+/**
+ * @brief Display company information based on location.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
+void companyLocation(Companies companies, BranchActivity branchActivity) {
+    int index, i;
+    char tempLocation[MAX_NAME];
+
+    cleanInputBuffer();
+    readString(tempLocation, MAX_LOCATION, MSG_GET_LOCATION);
+
+    int value = searchCompanyLocation(companies, tempLocation);
+
+    for (i = 0; i < branchActivity.branchCounter; i++) {
+        if (strcmp(companies.company[value].branch, branchActivity.branch[i].branch) == 0) {
+            index = i;
+        }
+    }
+    
+    if (value != -1) {
+        printCompany(companies.company[value], branchActivity.branch[index]);
+        companies.company[value].searchCounter++;
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+/**
  * @brief Select a branch of activity from the available options.
  * @param branch The structure holding information about branch activities.
  * @param selectedBranch Pointer to store the selected branch.
