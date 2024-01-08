@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "menus.h"
 #include "companies.h"
+#include "user.h"
+#include "admin.h"
 
 #define TOP_SEARCH_QUANTITY 3
 
@@ -124,7 +126,7 @@ void deleteMenu(Companies *companies, char *filename) {
         
         switch (option) {
             case 1:
-                deleteCompanyNif(companies, filename);
+                deleteCompanyNif(companies);
                 break;
             case 2:
                 deleteCompanyName(companies);
@@ -183,7 +185,7 @@ void reportsMenu(Companies *companies, BranchActivity *branch) {
                 listHigherCompanies(companies, branch);
                 break;
             case 2:
-                listMostCompanies(*companies, TOP_SEARCH_QUANTITY);
+                listMostCompanies(*companies, *branch, TOP_SEARCH_QUANTITY);
                 break;
             case 3:
                 break;
@@ -210,7 +212,7 @@ void companiesCatalog(Companies *companies, BranchActivity *branch, char *filena
 
         switch (option) {
             case 1:
-                insertCompanies(companies, branch, filename);
+                insertCompanies(companies, branch);
                 break;
             case 2:
                 updateMenu(companies, branch, filename);

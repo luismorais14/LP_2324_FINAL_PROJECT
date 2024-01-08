@@ -13,9 +13,9 @@ CND_BUILDDIR=build
 CND_DLIB_EXT=dll
 NBTMPDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/lp_2324_final_project
-OUTPUT_BASENAME=lp_2324_final_project
-PACKAGE_TOP_DIR=lp2324finalproject/
+OUTPUT_PATH=${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/lp_2324_final_project-7e237302894d9fc47c046acab07ea4ad74727828
+OUTPUT_BASENAME=lp_2324_final_project-7e237302894d9fc47c046acab07ea4ad74727828
+PACKAGE_TOP_DIR=lp2324finalproject-7e237302894d9fc47c046acab07ea4ad74727828/
 
 # Functions
 function checkReturnCode
@@ -60,15 +60,15 @@ mkdir -p ${NBTMPDIR}
 
 # Copy files and create directories and links
 cd "${TOP}"
-makeDirectory "${NBTMPDIR}/lp2324finalproject/bin"
+makeDirectory "${NBTMPDIR}/lp2324finalproject-7e237302894d9fc47c046acab07ea4ad74727828/bin"
 copyFileToTmpDir "${OUTPUT_PATH}.exe" "${NBTMPDIR}/${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}.exe" 0755
 
 
 # Generate tar file
 cd "${TOP}"
-rm -f ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/lp2324finalproject.tar
+rm -f ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/lp2324finalproject-7e237302894d9fc47c046acab07ea4ad74727828.tar
 cd ${NBTMPDIR}
-tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/lp2324finalproject.tar *
+tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/lp2324finalproject-7e237302894d9fc47c046acab07ea4ad74727828.tar *
 checkReturnCode
 
 # Cleanup

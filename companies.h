@@ -122,33 +122,12 @@ typedef struct {
     Company *company;
 } Companies;
 
-void loadData(Companies *companies, BranchActivity *branch, char *filename);
 
-void companyNif(Companies companies, BranchActivity branchActivity);
-void companyName(Companies companies, BranchActivity branchActivity);
-void companyLocation(Companies companies, BranchActivity branchActivity);
-void createActivity(BranchActivity *branch);
-void printBranches(BranchActivity branch);
-void insertCompanies(Companies *company, BranchActivity *branch, char *filename);
-void updateCompaniesByNif(Companies *companies, BranchActivity *branch, char *filename);
-void updateCompaniesByName(Companies *companies, BranchActivity *branch, char *filename);
-void updateCompaniesByLocation(Companies *companies, BranchActivity *branch, char *filename);
-void updateBranches(BranchActivity *branch );
-void createCommentLocation(Companies *companies);
-void createCommentName(Companies *companies);
-void createCommentNif(Companies *companies);
-void createClassificationLocation(Companies *companies);
-void createClassificationName(Companies *companies);
-void createClassificationNif(Companies *companies);
-void deleteCompanyNif(Companies *companies, char *filename);
-void manageCommentsNif(Companies *companies);
-void manageCommetsName(Companies *companies);
-void manageCommentsLocation(Companies *companies);
-void deleteBranch(Companies *companies, BranchActivity *branch);
-void listHigherCompanies(Companies *companies, Branch *branch);
+void loadData(Companies *companies, BranchActivity *branch, char *filename);
 void saveData(Companies *companies, BranchActivity *branch, char*);
+void printBranches(BranchActivity branch);
 void freeMemory(Companies *companies, BranchActivity *branch);
-void listMostCompanies(Companies companies, int sizeOfTop);
+
 
 #ifdef __cplusplus
 }
