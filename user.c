@@ -1,3 +1,10 @@
+/**
+ * @file user.c
+ * @brief Implementation of user-related functionalities for managing companies.
+ * @author Luís Morais & Cláudio Coelho
+ * @date 24-11-2023
+ */
+
 #include "companies.h"
 #include "input.h"
 #include "tools.h"
@@ -7,7 +14,11 @@
 #include <unistd.h>
 #include <ctype.h>
 
-
+/**
+ * @brief Select a branch of activity from the available options.
+ * @param branch The structure holding information about branch activities.
+ * @param selectedBranch Pointer to store the selected branch.
+ */
 void selectBranch(BranchActivity *branch, char *selectedBranch) {
     int option;
     
@@ -26,6 +37,10 @@ void selectBranch(BranchActivity *branch, char *selectedBranch) {
     } while (option < 0 || option >= branch->branchCounter);
 }
 
+/**
+ * @brief Create a new comment for a company based on NIF.
+ * @param companies The structure holding information about companies.
+ */
 void createCommentNif(Companies *companies) {
     int value = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     int index = searchCompanyNif(*companies, value);
@@ -58,6 +73,10 @@ void createCommentNif(Companies *companies) {
     }
 }
 
+/**
+ * @brief Create a new comment for a company based on name.
+ * @param companies The structure holding information about companies.
+ */
 void createCommentName(Companies *companies) {
     char tmpName[MAX_NAME];
     int index;
@@ -97,6 +116,10 @@ void createCommentName(Companies *companies) {
     }
 }
 
+/**
+ * @brief Create a new comment for a company based on location.
+ * @param companies The structure holding information about companies.
+ */
 void createCommentLocation(Companies *companies) {
     char tempLocation[MAX_NAME];
     int index;
@@ -142,6 +165,10 @@ void createCommentLocation(Companies *companies) {
     }
 }
 
+/**
+ * @brief Create a new classification for a company based on NIF.
+ * @param companies The structure holding information about companies.
+ */
 void createClassificationNif(Companies *companies) {
     int nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     int index = searchCompanyNif(*companies, nif);
@@ -155,6 +182,10 @@ void createClassificationNif(Companies *companies) {
     }
 }
 
+/**
+ * @brief Create a new classification for a company based on name.
+ * @param companies The structure holding information about companies.
+ */
 void createClassificationName(Companies *companies) {
     char tmpName[MAX_NAME];
     int index;
@@ -181,6 +212,10 @@ void createClassificationName(Companies *companies) {
     }
 }
 
+/**
+ * @brief Create a new classification for a company based on location.
+ * @param companies The structure holding information about companies.
+ */
 void createClassificationLocation(Companies *companies) {
     char tempLocation[MAX_NAME];
     int index;

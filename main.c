@@ -1,8 +1,14 @@
-/*
- * File:   main.c
- * Author: Luís Morais & Cláudio Coelho
- *
- * Created on 24 de novembro de 2023, 09:21
+/**
+ * @file main.c
+ * @brief Main program file for the Company Management System.
+ * @author Luís Morais & Cláudio Coelho
+ * @date 24-11-2023
+ * 
+ * @brief The C program consists of developing a business directory application that allows users to 
+ * discover, evaluate and interact with industrial and service companies located in a given geographical region.
+ * This project aims to connect consumers with local businesses and promote economic activity.
+ * 
+ * @version 1
  */
 
 #include <stdio.h>
@@ -14,13 +20,37 @@
 #include "admin.h"
 #include "user.h"
 
+/**
+ * @brief A string constant representing the file name.
+ *
+ * This constant is used to define the name of the file that will be saved in binary format for data persistence.
+ */
 #define FILENAME "companies.bin"
 
-/*
- *
+/**
+ * @struct Companies
+ * @brief Structure to hold information about companies.
+ * @var Companies::companiesCounter
+ * Member variable to store the number of companies.
+ * @var Companies::maxCompanies
+ * Member variable to define the maximum number of companies.
  */
 
+/**
+ * @struct BranchActivity
+ * @brief Structure to hold information about branch activity.
+ * @var BranchActivity::maxBranch
+ * Member variable to define the maximum number of branches.
+ * @var BranchActivity::branchCounter
+ * Member variable to store the number of branches.
+ */
+
+/**
+ * @brief Main function to execute the program.
+ * @return Returns EXIT_SUCCESS upon successful execution.
+ */
 int main(int argc, char** argv) { 
+    // Initialize Companies and BranchActivity structures
     Companies companies = {
         .companiesCounter = 0,
         .maxCompanies = 10
@@ -31,13 +61,16 @@ int main(int argc, char** argv) {
         .branchCounter = 0
     };
 
-
+    // Load data from the specified file
     loadData(&companies, &branch, FILENAME);
     
+    // Execute the main menu functionality
     mainMenu(&companies, &branch, FILENAME);
 
+    // Save data to the specified file
     saveData(&companies, &branch, FILENAME);
     
+    // Free allocated memory for Companies and BranchActivity
     freeCompanies(&companies, &branch);
 
     return (EXIT_SUCCESS);

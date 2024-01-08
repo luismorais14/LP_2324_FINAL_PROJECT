@@ -1,3 +1,11 @@
+/**
+ * @file user.c
+ * @brief Implementation of administrator-related functionalities for managing companies.
+ * @author Luís Morais & Cláudio Coelho
+ * @date 24-11-2023
+ */
+
+
 #include "companies.h"
 #include "input.h"
 #include "tools.h"
@@ -8,6 +16,11 @@
 #include "user.h"
 #include <ctype.h>
 
+/**
+ * @brief Display company information based on NIF.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
 void companyNif(Companies companies, BranchActivity branchActivity) {
     int index, i; 
     long long value = searchCompanyNif(companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
@@ -26,6 +39,12 @@ void companyNif(Companies companies, BranchActivity branchActivity) {
     }
 }
 
+
+/**
+ * @brief Display company information based on name.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
 void companyName(Companies companies, BranchActivity branchActivity) {
     int index, i;
     char tempName[MAX_NAME];
@@ -49,6 +68,11 @@ void companyName(Companies companies, BranchActivity branchActivity) {
     }
 }
 
+/**
+ * @brief Display company information based on location.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
 void companyLocation(Companies companies, BranchActivity branchActivity) {
     int index, i;
     char tempLocation[MAX_NAME];
@@ -72,6 +96,10 @@ void companyLocation(Companies companies, BranchActivity branchActivity) {
     }
 }
 
+/**
+ * @brief Create a new branch of activity.
+ * @param branch The structure holding information about branch activities.
+ */
 void createActivity(BranchActivity *branch) {
     if (branch->branchCounter == branch->maxBranch) {
         branch->branch = (Branch *) realloc(branch->branch, branch->branchCounter * sizeof(Branch)); 
@@ -97,6 +125,12 @@ void createActivity(BranchActivity *branch) {
     }
 }
 
+/**
+ * @brief Insert a new company into the system.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @return Returns the index of the newly inserted company.
+ */
 int insertCompany(Companies *companies, BranchActivity *branch) {
     int verification, nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     char tmpBranch[MAX_BRANCH];
@@ -152,6 +186,11 @@ int insertCompany(Companies *companies, BranchActivity *branch) {
     return -1;
 }
 
+/**
+ * @brief Wrapper function to insert a new company into the system.
+ * @param company The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ */
 void insertCompanies(Companies *company, BranchActivity *branch) {
         if (insertCompany(company, branch) == -1) {
             puts(ERROR_COMPANY_ALREADY_EXIST);
@@ -159,6 +198,12 @@ void insertCompanies(Companies *company, BranchActivity *branch) {
         }
 }  
 
+/**
+ * @brief Update company information based on NIF.
+ * @param company The structure holding information about a specific company.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The name of the file to save the changes.
+ */
 void updateCompany(Company *company, BranchActivity *branch, char *filename) {
     int verification, nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     char tmpBranch[MAX_BRANCH];
@@ -185,6 +230,12 @@ void updateCompany(Company *company, BranchActivity *branch, char *filename) {
     (*company).status = getInt(MIN_STATUS, MAX_STATUS, MSG_GET_STATUS);
 }
 
+/**
+ * @brief Update company information based on NIF.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The name of the file to save the changes.
+ */
 void updateCompaniesByNif(Companies *companies, BranchActivity *branch, char *filename) {    
     int  value = searchCompanyNif(*companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
     
@@ -196,6 +247,12 @@ void updateCompaniesByNif(Companies *companies, BranchActivity *branch, char *fi
     }
 }
 
+/**
+ * @brief Update company information based on name.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The name of the file to save the changes.
+ */
 void updateCompaniesByName(Companies *companies, BranchActivity *branch, char *filename) {    
     char tempName[MAX_NAME];
 
@@ -220,6 +277,12 @@ void updateCompaniesByName(Companies *companies, BranchActivity *branch, char *f
     
 }
 
+/**
+ * @brief Update company information based on location.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The name of the file to save the changes.
+ */
 void updateCompaniesByLocation(Companies *companies, BranchActivity *branch, char *filename) {    
     char tempLocation[MAX_NAME];
 
@@ -243,6 +306,10 @@ void updateCompaniesByLocation(Companies *companies, BranchActivity *branch, cha
     }
 }
 
+/**
+ * @brief Update branch information.
+ * @param branch The structure holding information about branch activities.
+ */
 void updateBranches(BranchActivity *branch) {
     if (branch->branchCounter > 0) {
         int value = editBranch(branch);
@@ -254,6 +321,10 @@ void updateBranches(BranchActivity *branch) {
     }
 }
 
+/**
+ * @brief Delete a company based on NIF.
+ * @param companies The structure holding information about companies.
+ */
 void deleteCompanyNif(Companies *companies) {
     int i, index = searchCompanyNif(*companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
 
@@ -275,6 +346,10 @@ void deleteCompanyNif(Companies *companies) {
     }
 }
 
+/**
+ * @brief Delete a company based on name.
+ * @param companies The structure holding information about companies.
+ */
 void deleteCompanyName(Companies *companies) {
     char tmpName[MAX_NAME];
     int index, i;
@@ -309,6 +384,10 @@ void deleteCompanyName(Companies *companies) {
     }
 }
 
+/**
+ * @brief Delete a company based on location.
+ * @param companies The structure holding information about companies.
+ */
 void deleteCompanyLocation(Companies *companies) {
     char tempLocation[MAX_NAME];
     int index, i;
@@ -343,6 +422,10 @@ void deleteCompanyLocation(Companies *companies) {
     }
 }
 
+/**
+ * @brief Manage comments for a specific company based on NIF.
+ * @param companies The structure holding information about companies.
+ */
 void manageCommentsNif(Companies *companies) {
     long long value = searchCompanyNif(*companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
     int option1, option2, i;
@@ -388,6 +471,11 @@ void manageCommentsNif(Companies *companies) {
     }
 }
 
+
+/**
+ * @brief Manage comments for a specific company based on name.
+ * @param companies The structure holding information about companies.
+ */
 void manageCommetsName(Companies *companies) {
     char tempName[MAX_NAME];
     int option1, option2, i;
@@ -445,6 +533,10 @@ void manageCommetsName(Companies *companies) {
     }
 }
 
+/**
+ * @brief Manage comments for a specific company based on location.
+ * @param companies The structure holding information about companies.
+ */
 void manageCommentsLocation(Companies *companies) {
     char tempLocation[MAX_NAME];
     int option1, option2, i;
@@ -502,6 +594,11 @@ void manageCommentsLocation(Companies *companies) {
     }
 }
 
+/**
+ * @brief Delete a branch of activity.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ */
 void deleteBranch(Companies *companies, BranchActivity *branch) {
     if (branch->branchCounter > 0) {
         int value = removeBranch(branch);
@@ -525,6 +622,11 @@ void deleteBranch(Companies *companies, BranchActivity *branch) {
     }
 }
 
+/**
+ * @brief List companies with higher average ratings.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
 void listHigherCompanies(Companies *companies, BranchActivity *branchActivity) { 
     if (companies->companiesCounter > 0) {
         int i, j, index;
@@ -546,6 +648,12 @@ void listHigherCompanies(Companies *companies, BranchActivity *branchActivity) {
     }
 }
 
+/**
+ * @brief List the most searched companies.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ * @param sizeOfTop The number of top companies to list.
+ */
 void listMostCompanies(Companies companies, BranchActivity branchActivity, int sizeOfTop) {
     int index;
     if (companies.companiesCounter > 0) {
@@ -567,3 +675,4 @@ void listMostCompanies(Companies companies, BranchActivity branchActivity, int s
         }
     }
 }
+

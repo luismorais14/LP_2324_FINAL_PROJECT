@@ -1,3 +1,10 @@
+/**
+ * @file menus.c
+ * @brief Implementation of menus and user interface functions.
+ * @author Luís Morais & Cláudio Coelho
+ * @date 24-11-2023
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "menus.h"
@@ -7,6 +14,9 @@
 
 #define TOP_SEARCH_QUANTITY 3
 
+/**
+ * @brief Display the search menu options.
+ */
 void displaySearchMenu() {
     puts("----------------------------");
     puts("1- Search by NIF");
@@ -17,6 +27,11 @@ void displaySearchMenu() {
     puts("Choose one of the options above: [1 - 4]");
 }
 
+/**
+ * @brief Handle the search menu options.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
 void searchMenu(Companies *companies, BranchActivity *branchActivity) {
     int option;
 
@@ -42,6 +57,12 @@ void searchMenu(Companies *companies, BranchActivity *branchActivity) {
     } while (option != 4);
 }
 
+/**
+ * @brief Handle the update menu options.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The filename for data persistence.
+ */
 void updateMenu(Companies *companies, BranchActivity *branch, char *filename) {
     int option;
 
@@ -67,6 +88,11 @@ void updateMenu(Companies *companies, BranchActivity *branch, char *filename) {
     } while (option != 4);
 }
 
+/**
+ * @brief Handle the comment menu options.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ */
 void commentMenu(Companies *companies, BranchActivity *branch) {
     int option;
     
@@ -92,6 +118,10 @@ void commentMenu(Companies *companies, BranchActivity *branch) {
     } while (option != 4);
 }
 
+/**
+ * @brief Handle the rating menu options.
+ * @param companies The structure holding information about companies.
+ */
 void ratingMenu(Companies *companies) {
     int option;
     
@@ -117,6 +147,11 @@ void ratingMenu(Companies *companies) {
     } while (option != 4);
 }
 
+/**
+ * @brief Handle the delete menu options.
+ * @param companies The structure holding information about companies.
+ * @param filename The filename for data persistence.
+ */
 void deleteMenu(Companies *companies, char *filename) {
     int option;
     
@@ -142,6 +177,10 @@ void deleteMenu(Companies *companies, char *filename) {
     } while (option != 4);
 }
 
+/**
+ * @brief Handle the comments menu options.
+ * @param companies The structure holding information about companies.
+ */
 void commentsMenu(Companies *companies) {
     int option;
     
@@ -167,6 +206,11 @@ void commentsMenu(Companies *companies) {
     } while (option != 4);
 }
 
+/**
+ * @brief Handle the reports menu options.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ */
 void reportsMenu(Companies *companies, BranchActivity *branch) {
     int option;
     
@@ -196,6 +240,12 @@ void reportsMenu(Companies *companies, BranchActivity *branch) {
     } while (option != 3);
 }
 
+/**
+ * @brief Handle the companies catalog menu options.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The filename for data persistence.
+ */
 void companiesCatalog(Companies *companies, BranchActivity *branch, char *filename) {
     int option;
 
@@ -231,6 +281,11 @@ void companiesCatalog(Companies *companies, BranchActivity *branch, char *filena
     } while (option != 5);
 }
 
+/**
+ * @brief Handle the branches of activity menu options.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ */
 void branchesOfActivity(Companies *companies, BranchActivity *branch) {
     int option;
 
@@ -262,8 +317,12 @@ void branchesOfActivity(Companies *companies, BranchActivity *branch) {
     } while (option != 4);
 }
 
-
-
+/**
+ * @brief Handle the admin menu options.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The filename for data persistence.
+ */
 void adminMenu(Companies *companies, BranchActivity *branch, char *filename) {
     int option;
 
@@ -298,6 +357,11 @@ void adminMenu(Companies *companies, BranchActivity *branch, char *filename) {
     } while (option != 4);
 }
 
+/**
+ * @brief Handle the user menu options.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ */
 void userMenu(Companies *companies, BranchActivity *branch) {
     int option;
 
@@ -331,6 +395,12 @@ void userMenu(Companies *companies, BranchActivity *branch) {
     } while (option != 4);
 }
 
+/**
+ * @brief Handle the main menu options.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The filename for data persistence.
+ */
 void mainMenu(Companies *companies, BranchActivity *branch, char *filename) {
     int option;
 
