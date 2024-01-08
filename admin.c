@@ -480,15 +480,8 @@ void manageCommetsName(Companies *companies) {
     char tempName[MAX_NAME];
     int option1, option2, i;
 
-    puts(MSG_GET_NAME);
-    if (scanf("%s", tempName) != NULL) {
-        unsigned int len = strlen(tempName) - 1;
-        if (tempName[len] == '\n') {
-            tempName[len] = '\0';
-        } else {
-            cleanInputBuffer();
-        }
-    }
+    cleanInputBuffer();
+    readString(tempName, MAX_NAME, MSG_GET_NAME);
 
     int value = searchCompanyName(*companies, tempName);
 
@@ -541,15 +534,8 @@ void manageCommentsLocation(Companies *companies) {
     char tempLocation[MAX_NAME];
     int option1, option2, i;
 
-    puts(MSG_GET_NAME);
-    if (scanf("%s", tempLocation) != NULL) {
-        unsigned int len = strlen(tempLocation) - 1;
-        if (tempLocation[len] == '\n') {
-            tempLocation[len] = '\0';
-        } else {
-            cleanInputBuffer();
-        }
-    }
+    cleanInputBuffer();
+    readString(tempLocation, MAX_LOCATION, MSG_GET_LOCATION);
 
     int value = searchCompanyLocation(*companies, tempLocation);
 
