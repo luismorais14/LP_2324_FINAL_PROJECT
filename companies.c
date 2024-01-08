@@ -185,7 +185,8 @@ void createActivity(BranchActivity *branch) {
 
     if (branch->branch != NULL) {
         puts("Enter the new branch name: ");
-        if (scanf("%s", branch->branch[branch->branchCounter].branch) != 1) {
+        cleanInputBuffer();
+        if (scanf("% [^\n]s", branch->branch[branch->branchCounter].branch) != 1) {
             puts("Invalid input. New branch creation failed.\n");
             cleanInputBuffer();
             branch->branchCounter--;
