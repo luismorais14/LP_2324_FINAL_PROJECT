@@ -22,10 +22,11 @@
  */
 void createActivity(BranchActivity *branch) {
     if (branch->branchCounter == branch->maxBranch) {
-        branch->branch = (Branch *) realloc(branch->branch, branch->branchCounter * sizeof(Branch)); 
+        branch->branch = (Branch *) realloc(branch->branch, branch->maxBranch*2 *sizeof(Branch)); 
     }
 
     if (branch->branch != NULL) {
+        branch->maxBranch *= 2;
         puts("Enter the new branch name: ");
         cleanInputBuffer();
         if (fgets(branch->branch[branch->branchCounter].branch, MAX_BRANCH, stdin) == NULL) {
