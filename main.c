@@ -20,11 +20,7 @@
 #include "admin.h"
 #include "user.h"
 
-/**
- * @brief A string constant representing the file name.
- *
- * This constant is used to define the name of the file that will be saved in binary format for data persistence.
- */
+
 #define FILENAME "companies.bin"
 
 /**

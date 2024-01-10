@@ -12,8 +12,6 @@
 #include "user.h"
 #include "admin.h"
 
-#define TOP_SEARCH_QUANTITY 3
-
 /**
  * @brief Display the search menu options.
  */

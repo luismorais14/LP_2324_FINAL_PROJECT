@@ -31,6 +31,8 @@ void companyNif(Companies companies, BranchActivity branchActivity) {
     
     if (value != -1) {
         printCompany(companies.company[value], branchActivity.branch[index]);
+        printf("Average rating: %.2f\n", (float) companies.company[value].classification);
+        listComments(companies.company[value]);
         companies.company[value].searchCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
@@ -60,6 +62,8 @@ void companyName(Companies companies, BranchActivity branchActivity) {
 
     if (value != -1) {
         printCompany(companies.company[value], branchActivity.branch[index]);
+        printf("Average rating: %.2f\n",(float) companies.company[value].classification);
+        listComments(companies.company[value]);
         companies.company[value].searchCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
@@ -88,6 +92,8 @@ void companyLocation(Companies companies, BranchActivity branchActivity) {
     
     if (value != -1) {
         printCompany(companies.company[value], branchActivity.branch[index]);
+        printf("Average rating: %.2f\n", (float) companies.company[value].classification);
+        listComments(companies.company[value]);
         companies.company[value].searchCounter++;
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);

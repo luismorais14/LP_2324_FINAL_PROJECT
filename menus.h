@@ -15,6 +15,13 @@ extern "C" {
 
 #include "companies.h"
 
+/**
+ * @brief A constant string representing the number of most searched companies.
+ *
+ * This constant is used to define the number of most searched companies to be presented.
+ */
+#define TOP_SEARCH_QUANTITY 3
+    
 void mainMenu(Companies *companies, BranchActivity *branch, char *filename);
 void adminMenu(Companies *companies, BranchActivity *branch, char *filename);
 void userMenu(Companies *companies, BranchActivity *branch);
