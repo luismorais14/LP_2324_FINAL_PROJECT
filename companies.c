@@ -335,11 +335,16 @@ void loadData(Companies *companies, BranchActivity *branch, char *filename) {
 }
 
 /**
- * @brief Free memory allocated for companies and branches.
- * @param companies The structure containing the list of companies.
- * @param branch The structure containing the list of branches.
+ * @brief Frees the allocated memory for Companies, Company, and BranchActivity structures.
+ *
+ * This function deallocates the memory allocated for the Companies, Company, and BranchActivity structures
+ * and sets the corresponding pointers to NULL to avoid dangling pointers.
+ *
+ * @param companies A pointer to the Companies structure.
+ * @param company   A pointer to the Company structure.
+ * @param branch    A pointer to the BranchActivity structure.
  */
-void freeCompanies(Companies *companies, BranchActivity *branch) {
+void freeCompanies(Companies *companies, Company *company, BranchActivity *branch) {
     if (companies->company) {
         free(companies->company);
         companies->company = NULL;
@@ -349,9 +354,15 @@ void freeCompanies(Companies *companies, BranchActivity *branch) {
         free(branch->branch);
         branch->branch = NULL;
     }
+    
+    if (company->comments) {
+        free(company->comments);
+        company->comments = NULL;
+    }
 
     companies = NULL;
     branch = NULL;
+    company = NULL;
 }
 
 /**
