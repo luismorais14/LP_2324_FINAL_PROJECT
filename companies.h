@@ -1,19 +1,24 @@
-
-/*
- * File:   companies.h
- * Author: Luís Morais
- *
- * Created on 14 de dezembro de 2023, 21:10
- */
-
+/**
+* @file input.h
+* @author Luís Morais & Cláudio Coelho
+* @date 14-12-2023
+* @version 1
+*
+*
+* @brief A header file providing utility functions for user input validation and retrieval.
+*
+* This header file contains a collection of functions designed to facilitate user input
+* in a C or C++ program. It includes functions for obtaining integers, floats, doubles,
+* characters, and strings from the user while performing input validation to ensure
+* that the entered values are within specified ranges or constraints.
+*/
 #ifndef COMPANIES_H
 #define COMPANIES_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
-#define COMPANIES_INITIAL_CAPACITY 10
+
 
 #define MAX_NIF 999999999
 #define MIN_NIF 100000000

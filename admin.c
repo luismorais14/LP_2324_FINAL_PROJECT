@@ -23,14 +23,17 @@
 void createActivity(BranchActivity *branch) {
     if (branch->branchCounter == branch->maxBranch) {
         branch->branch = (Branch *) realloc(branch->branch, branch->maxBranch*2 *sizeof(Branch)); 
+        
+        if (branch->branch != NULL) {
+            branch->maxBranch *= 2;
+        }
     }
 
     if (branch->branch != NULL) {
-        branch->maxBranch *= 2;
         puts("Enter the new branch name: ");
         cleanInputBuffer();
         if (fgets(branch->branch[branch->branchCounter].branch, MAX_BRANCH, stdin) == NULL) {
-            puts("Invalid input. New branch creation failed.\n");
+            puts("Invalid input. New branch creation failed.");
             cleanInputBuffer();
             branch->branchCounter--;
         } else {
@@ -53,7 +56,7 @@ void createActivity(BranchActivity *branch) {
  * @return Returns the index of the newly inserted company.
  */
 int insertCompany(Companies *companies, BranchActivity *branch) {
-    int verification, nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
+    int verification, nif = getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     char tmpBranch[MAX_BRANCH];
 
     Company *company = &companies->company[companies->companiesCounter];
@@ -88,7 +91,7 @@ int insertCompany(Companies *companies, BranchActivity *branch) {
             readString(company->location, MAX_LOCATION, MSG_GET_LOCATION);
             selectBranch(branch, tmpBranch);
             strcpy(company->branch, tmpBranch);
-            company->companyCategory = getInt(MIN_CATEGORY, MAX_CATEGORY, MSG_GET_CATEGORY);
+            company->companyCategory = getNum(MIN_CATEGORY, MAX_CATEGORY, MSG_GET_CATEGORY);
             company->status = ATIVO;
             
             company->maxComments = 5;
@@ -126,7 +129,7 @@ void insertCompanies(Companies *company, BranchActivity *branch) {
  * @param filename The name of the file to save the changes.
  */
 void updateCompany(Company *company, BranchActivity *branch, char *filename) {
-    int verification, nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
+    int verification, nif = getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     char tmpBranch[MAX_BRANCH];
     
     company->nif = nif;
@@ -147,8 +150,8 @@ void updateCompany(Company *company, BranchActivity *branch, char *filename) {
     readString((*company).location, MAX_LOCATION, MSG_GET_LOCATION);
     selectBranch(branch, tmpBranch);
     strcpy((*company).branch, tmpBranch);
-    (*company).companyCategory = getInt(MIN_CATEGORY, MAX_CATEGORY, MSG_GET_CATEGORY);
-    (*company).status = getInt(MIN_STATUS, MAX_STATUS, MSG_GET_STATUS);
+    (*company).companyCategory = getNum(MIN_CATEGORY, MAX_CATEGORY, MSG_GET_CATEGORY);
+    (*company).status = getNum(MIN_STATUS, MAX_STATUS, MSG_GET_STATUS);
 }
 
 /**
@@ -158,7 +161,7 @@ void updateCompany(Company *company, BranchActivity *branch, char *filename) {
  * @param filename The name of the file to save the changes.
  */
 void updateCompaniesByNif(Companies *companies, BranchActivity *branch, char *filename) {    
-    int  value = searchCompanyNif(*companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
+    int  value = searchCompanyNif(*companies, getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF));
     
     if (value != -1){
         updateCompany(&(*companies).company[value], branch, filename);
@@ -236,7 +239,7 @@ void updateBranches(BranchActivity *branch) {
         int value = editBranch(branch);
     
         cleanInputBuffer();
-        readString(&(*branch).branch[value] ,MAX_BRANCH , MSG_CREATE_BRANCH);
+        readString(&(*branch).branch[value].branch ,MAX_BRANCH , MSG_CREATE_BRANCH);
     } else {
         puts("There are no branches of activity available for editing. Please create one first.");
     }
@@ -247,7 +250,7 @@ void updateBranches(BranchActivity *branch) {
  * @param companies The structure holding information about companies.
  */
 void deleteCompanyNif(Companies *companies) {
-    int i, index = searchCompanyNif(*companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
+    int i, index = searchCompanyNif(*companies, getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF));
 
     if (index != -1) {
         if (companies->company[index].commentsCounter == 0) {
@@ -348,7 +351,7 @@ void deleteCompanyLocation(Companies *companies) {
  * @param companies The structure holding information about companies.
  */
 void manageCommentsNif(Companies *companies) {
-    long long value = searchCompanyNif(*companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
+    long long value = searchCompanyNif(*companies, getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF));
     int option1, option2, i;
 
     if (value != -1) {

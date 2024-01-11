@@ -28,7 +28,7 @@ void cleanInputBuffer() {
  * @param msg The message prompting the user for input.
  * @return The validated integer value.
  */
-long long getInt(long long minValue, long long maxValue, char *msg) {
+long long getNum(long long minValue, long long maxValue, char *msg) {
     long long value;
 
     puts(msg);

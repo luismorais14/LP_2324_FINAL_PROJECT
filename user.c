@@ -21,7 +21,7 @@
  */
 void companyNif(Companies companies, BranchActivity branchActivity) {
     int index, i; 
-    long long value = searchCompanyNif(companies, getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF));
+    long long value = searchCompanyNif(companies, getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF));
  
     for (i = 0; i < branchActivity.branchCounter; i++) {
         if (strcmp(companies.company[value].branch, branchActivity.branch[i].branch) == 0) {
@@ -128,7 +128,7 @@ void selectBranch(BranchActivity *branch, char *selectedBranch) {
  * @param companies The structure holding information about companies.
  */
 void createCommentNif(Companies *companies) {
-    int value = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
+    int value = getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     int index = searchCompanyNif(*companies, value);
     Comment *pComment = &companies->company[index].comments;
     
@@ -256,11 +256,11 @@ void createCommentLocation(Companies *companies) {
  * @param companies The structure holding information about companies.
  */
 void createClassificationNif(Companies *companies) {
-    int nif = getInt(MIN_NIF, MAX_NIF, MSG_GET_NIF);
+    int nif = getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     int index = searchCompanyNif(*companies, nif);
            
     if (index != -1) {     
-        companies->company[index].classification += getInt(MIN_RATING, MAX_RATING, MSG_GET_RATING);
+        companies->company[index].classification += getNum(MIN_RATING, MAX_RATING, MSG_GET_RATING);
         
         companies->company[index].classificationCounter++;
     } else {
@@ -290,7 +290,7 @@ void createClassificationName(Companies *companies) {
     
    
     if (index != -1) {
-        companies->company[index].classification = getInt(MIN_RATING, MAX_RATING, MSG_GET_RATING);
+        companies->company[index].classification = getNum(MIN_RATING, MAX_RATING, MSG_GET_RATING);
         
         companies->company[index].classificationCounter++;
     } else {
@@ -320,7 +320,7 @@ void createClassificationLocation(Companies *companies) {
     
     
     if (index != -1) {
-        companies->company[index].classification = getInt(MIN_RATING, MAX_RATING, MSG_GET_RATING);
+        companies->company[index].classification = getNum(MIN_RATING, MAX_RATING, MSG_GET_RATING);
         
     companies->company[index].classificationCounter++;
     } else {
