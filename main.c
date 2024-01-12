@@ -49,7 +49,11 @@ int main(int argc, char** argv) {
     // Initialize Companies and BranchActivity structures
     Companies companies = {
         .companiesCounter = 0,
-        .maxCompanies = 10
+        .maxCompanies = 10,
+    };
+    
+    Company company = {
+       .classification = 0 
     };
         
     BranchActivity branch = {
@@ -67,7 +71,7 @@ int main(int argc, char** argv) {
     saveData(&companies, &branch, FILENAME);
     
     // Free allocated memory for Companies and BranchActivity
-    freeCompanies(&companies, &branch);
+    freeCompanies(&companies, &company, &branch);
 
     return (EXIT_SUCCESS);
 }

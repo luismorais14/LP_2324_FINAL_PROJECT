@@ -132,6 +132,7 @@ void loadData(Companies *companies, BranchActivity *branch, char *filename);
 void saveData(Companies *companies, BranchActivity *branch, char*);
 void printBranches(BranchActivity branch);
 void freeMemory(Companies *companies, BranchActivity *branch);
+void logFile(char *msg, char *filename);
 
 
 #ifdef __cplusplus

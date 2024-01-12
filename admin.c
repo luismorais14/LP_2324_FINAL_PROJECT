@@ -99,6 +99,7 @@ int insertCompany(Companies *companies, BranchActivity *branch) {
             company->comments = (Comment *) malloc(company->maxComments * sizeof(Comment));
             
             company->classificationCounter = 0;
+            company->classification = 0;
             
 
             return companies->companiesCounter++;

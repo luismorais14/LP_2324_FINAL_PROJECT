@@ -224,9 +224,11 @@ void reportsMenu(Companies *companies, BranchActivity *branch) {
         
         switch (option) {
             case 1:
+                logFile("List companies with a rating higher than 4.5", "log.txt");
                 listHigherCompanies(companies, branch);
                 break;
             case 2:
+                logFile("List the most searched companies", "log.txt");
                 listMostCompanies(*companies, *branch, TOP_SEARCH_QUANTITY);
                 break;
             case 3:
@@ -260,15 +262,19 @@ void companiesCatalog(Companies *companies, BranchActivity *branch, char *filena
 
         switch (option) {
             case 1:
+                logFile("Create Company", "log.txt");
                 insertCompanies(companies, branch);
                 break;
             case 2:
+                logFile("Update Company", "log.txt");
                 updateMenu(companies, branch, filename);
                 break;
             case 3:
+                logFile("Delete Company", "log.txt");
                 deleteMenu(companies, filename);
                 break;
             case 4:
+                logFile("Manage Comments", "log.txt");
                 commentsMenu(companies);
                 break;
             case 5:
@@ -299,12 +305,15 @@ void branchesOfActivity(Companies *companies, BranchActivity *branch) {
 
         switch (option) {
             case 1:
+                logFile("Create branch of activity", "log.txt");
                 createActivity(branch);
                 break;
             case 2:
+                logFile("Update branch of activity", "log.txt");
                 updateBranches(branch);
                 break;
             case 3:
+                logFile("Delete branch of activity", "log.txt");
                 deleteBranch(companies, branch);
                 break;
             case 4:
@@ -377,13 +386,16 @@ void userMenu(Companies *companies, BranchActivity *branch) {
 
         switch (option) {
             case 1:
+                logFile("Search Company", "log.txt");
                 searchMenu(companies, branch);
                 break;
             case 2:
+                logFile("Classify Company", "log.txt");
                 ratingMenu(companies);
                 break;
             case 3:
-                commentMenu(companies, branch);                
+                logFile("Comment Company", "log.txt");
+                commentMenu(companies, branch); 
                 break;
             case 4:
                 break;
@@ -415,9 +427,11 @@ void mainMenu(Companies *companies, BranchActivity *branch, char *filename) {
 
         switch (option) {
             case 1:
+                logFile("Admin Menu", "log.txt");
                 adminMenu(companies, branch, filename);
                 break;
             case 2:
+                logFile("User Menu", "log.txt");
                 userMenu(companies, branch);
                 break;
             case 3:
