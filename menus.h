@@ -22,10 +22,10 @@ extern "C" {
  */
 #define TOP_SEARCH_QUANTITY 3
     
-void mainMenu(Companies *companies, BranchActivity *branch, char *filename);
-void adminMenu(Companies *companies, BranchActivity *branch, char *filename);
+void mainMenu(Companies *companies, BranchActivity *branch);
+void adminMenu(Companies *companies, BranchActivity *branch);
 void userMenu(Companies *companies, BranchActivity *branch);
-void companiesCatalog(Companies *companies, BranchActivity *branch, char *filename);
+void companiesCatalog(Companies *companies, BranchActivity *branch);
 
 
 #ifdef __cplusplus

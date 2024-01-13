@@ -129,7 +129,7 @@ void insertCompanies(Companies *company, BranchActivity *branch) {
  * @param branch The structure holding information about branch activities.
  * @param filename The name of the file to save the changes.
  */
-void updateCompany(Company *company, BranchActivity *branch, char *filename) {
+void updateCompany(Company *company, BranchActivity *branch) {
     int verification, nif = getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     char tmpBranch[MAX_BRANCH];
     
@@ -161,11 +161,11 @@ void updateCompany(Company *company, BranchActivity *branch, char *filename) {
  * @param branch The structure holding information about branch activities.
  * @param filename The name of the file to save the changes.
  */
-void updateCompaniesByNif(Companies *companies, BranchActivity *branch, char *filename) {    
+void updateCompaniesByNif(Companies *companies, BranchActivity *branch) {    
     int  value = searchCompanyNif(*companies, getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF));
     
     if (value != -1){
-        updateCompany(&(*companies).company[value], branch, filename);
+        updateCompany(&(*companies).company[value], branch);
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
         return;
@@ -178,7 +178,7 @@ void updateCompaniesByNif(Companies *companies, BranchActivity *branch, char *fi
  * @param branch The structure holding information about branch activities.
  * @param filename The name of the file to save the changes.
  */
-void updateCompaniesByName(Companies *companies, BranchActivity *branch, char *filename) {    
+void updateCompaniesByName(Companies *companies, BranchActivity *branch) {    
     char tempName[MAX_NAME];
 
     puts(MSG_GET_NAME);
@@ -194,7 +194,7 @@ void updateCompaniesByName(Companies *companies, BranchActivity *branch, char *f
     int value = searchCompanyName(*companies, tempName);
     
     if (value != -1){
-        updateCompany(&(*companies).company[value], branch, filename);
+        updateCompany(&(*companies).company[value], branch);
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
         return;
@@ -208,7 +208,7 @@ void updateCompaniesByName(Companies *companies, BranchActivity *branch, char *f
  * @param branch The structure holding information about branch activities.
  * @param filename The name of the file to save the changes.
  */
-void updateCompaniesByLocation(Companies *companies, BranchActivity *branch, char *filename) {    
+void updateCompaniesByLocation(Companies *companies, BranchActivity *branch) {    
     char tempLocation[MAX_NAME];
 
     puts(MSG_GET_NAME);
@@ -224,7 +224,7 @@ void updateCompaniesByLocation(Companies *companies, BranchActivity *branch, cha
     int value = searchCompanyLocation(*companies, tempLocation);
     
     if (value != -1){
-        updateCompany(&(*companies).company[value], branch, filename);
+        updateCompany(&(*companies).company[value], branch);
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
         return;

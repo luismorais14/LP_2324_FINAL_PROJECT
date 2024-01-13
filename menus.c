@@ -61,7 +61,7 @@ void searchMenu(Companies *companies, BranchActivity *branchActivity) {
  * @param branch The structure holding information about branch activities.
  * @param filename The filename for data persistence.
  */
-void updateMenu(Companies *companies, BranchActivity *branch, char *filename) {
+void updateMenu(Companies *companies, BranchActivity *branch) {
     int option;
 
     do {
@@ -70,13 +70,13 @@ void updateMenu(Companies *companies, BranchActivity *branch, char *filename) {
 
         switch (option) {
             case 1:
-                updateCompaniesByNif(companies, branch, filename);
+                updateCompaniesByNif(companies, branch);
                 break;
             case 2:
-                updateCompaniesByName(companies, branch, filename);
+                updateCompaniesByName(companies, branch);
                 break;
             case 3:
-                updateCompaniesByLocation(companies, branch, filename);
+                updateCompaniesByLocation(companies, branch);
                 break;
             case 4:
                 break;
@@ -150,7 +150,7 @@ void ratingMenu(Companies *companies) {
  * @param companies The structure holding information about companies.
  * @param filename The filename for data persistence.
  */
-void deleteMenu(Companies *companies, char *filename) {
+void deleteMenu(Companies *companies) {
     int option;
     
     do {
@@ -246,7 +246,7 @@ void reportsMenu(Companies *companies, BranchActivity *branch) {
  * @param branch The structure holding information about branch activities.
  * @param filename The filename for data persistence.
  */
-void companiesCatalog(Companies *companies, BranchActivity *branch, char *filename) {
+void companiesCatalog(Companies *companies, BranchActivity *branch) {
     int option;
 
     do {
@@ -267,11 +267,11 @@ void companiesCatalog(Companies *companies, BranchActivity *branch, char *filena
                 break;
             case 2:
                 logFile("Update Company", "log.txt");
-                updateMenu(companies, branch, filename);
+                updateMenu(companies, branch);
                 break;
             case 3:
                 logFile("Delete Company", "log.txt");
-                deleteMenu(companies, filename);
+                deleteMenu(companies);
                 break;
             case 4:
                 logFile("Manage Comments", "log.txt");
@@ -330,7 +330,7 @@ void branchesOfActivity(Companies *companies, BranchActivity *branch) {
  * @param branch The structure holding information about branch activities.
  * @param filename The filename for data persistence.
  */
-void adminMenu(Companies *companies, BranchActivity *branch, char *filename) {
+void adminMenu(Companies *companies, BranchActivity *branch) {
     int option;
 
     do {        
@@ -347,7 +347,7 @@ void adminMenu(Companies *companies, BranchActivity *branch, char *filename) {
 
         switch (option) {
             case 1:
-                companiesCatalog(companies, branch, filename);
+                companiesCatalog(companies, branch);
                 break;
             case 2:
                 branchesOfActivity(companies, branch);
@@ -411,7 +411,7 @@ void userMenu(Companies *companies, BranchActivity *branch) {
  * @param branch The structure holding information about branch activities.
  * @param filename The filename for data persistence.
  */
-void mainMenu(Companies *companies, BranchActivity *branch, char *filename) {
+void mainMenu(Companies *companies, BranchActivity *branch) {
     int option;
 
     do {
@@ -428,7 +428,7 @@ void mainMenu(Companies *companies, BranchActivity *branch, char *filename) {
         switch (option) {
             case 1:
                 logFile("Admin Menu", "log.txt");
-                adminMenu(companies, branch, filename);
+                adminMenu(companies, branch);
                 break;
             case 2:
                 logFile("User Menu", "log.txt");

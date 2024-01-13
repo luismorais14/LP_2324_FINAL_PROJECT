@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
     loadData(&companies, &branch, FILENAME);
     
     // Execute the main menu functionality
-    mainMenu(&companies, &branch, FILENAME);
+    mainMenu(&companies, &branch);
 
     // Save data to the specified file
     saveData(&companies, &branch, FILENAME);

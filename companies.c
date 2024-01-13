@@ -286,8 +286,7 @@ void saveData(Companies *companies, BranchActivity *branch, char *filename) {
         fwrite(&branch->branch[i], sizeof(Branch), 1, fp);
 
         for (int j = 0; j < companies->company[i].commentsCounter; j++) {
-            fwrite(&companies->company[i].comments[j], sizeof(Comment), 1, fp);
-            
+            fwrite(&companies->company[i].comments[j], sizeof(Comment), 1, fp);    
         }
     }
 

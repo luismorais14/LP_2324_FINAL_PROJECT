@@ -48,7 +48,7 @@ void insertCompanies(Companies *company, BranchActivity *branch);
  * @param branch The structure holding information about branch activities.
  * @param filename The name of the file to save the changes.
  */
-void updateCompany(Company *company, BranchActivity *branch, char *filename);
+void updateCompany(Company *company, BranchActivity *branch);
 
 /**
  * @brief Update company information based on NIF.
@@ -56,7 +56,7 @@ void updateCompany(Company *company, BranchActivity *branch, char *filename);
  * @param branch The structure holding information about branch activities.
  * @param filename The name of the file to save the changes.
  */
-void updateCompaniesByNif(Companies *companies, BranchActivity *branch, char *filename);
+void updateCompaniesByNif(Companies *companies, BranchActivity *branch);
 
 /**
  * @brief Update company information based on name.
@@ -64,7 +64,7 @@ void updateCompaniesByNif(Companies *companies, BranchActivity *branch, char *fi
  * @param branch The structure holding information about branch activities.
  * @param filename The name of the file to save the changes.
  */
-void updateCompaniesByName(Companies *companies, BranchActivity *branch, char *filename);
+void updateCompaniesByName(Companies *companies, BranchActivity *branch);
 
 /**
  * @brief Update company information based on location.
@@ -72,7 +72,7 @@ void updateCompaniesByName(Companies *companies, BranchActivity *branch, char *f
  * @param branch The structure holding information about branch activities.
  * @param filename The name of the file to save the changes.
  */
-void updateCompaniesByLocation(Companies *companies, BranchActivity *branch, char *filename);
+void updateCompaniesByLocation(Companies *companies, BranchActivity *branch);
 
 /**
  * @brief Update branch information.
