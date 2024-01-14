@@ -6,11 +6,9 @@
 *
 *
 * @brief A header file providing utility functions for administrator features.
-*
-* This header file contains the collection of functions designed to facilitate 
-* the program's administrator functions. It includes functions for creating, 
-* editing and removing companies, managing comments, creating or deleting branches 
-* of activity and functions for viewing reports on the companies created.
+* 
+* 
+*  This header file contains the administrator related functions to be used in the program.
 * 
 */
 
@@ -21,6 +19,8 @@
 extern "C" {
 #endif
 
+#define ERROR_BRANCH_ALREADY_EXIST "Error creating new branch of activity: Branch already exists."    
+    
     /**
  * @brief Create a new branch of activity.
  * @param branch The structure holding information about branch activities.

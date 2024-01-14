@@ -284,12 +284,14 @@ void saveData(Companies *companies, BranchActivity *branch, char *filename) {
     for (int i = 0; i < companies->companiesCounter; i++) {
         fwrite(&companies->company[i], sizeof(Company), 1, fp);
         fwrite(&branch->branch[i], sizeof(Branch), 1, fp);
-
+    }
+    
+    
+    for (int i = 0; i < companies->companiesCounter; i++) {
         for (int j = 0; j < companies->company[i].commentsCounter; j++) {
             fwrite(&companies->company[i].comments[j], sizeof(Comment), 1, fp);    
         }
     }
-
     fclose(fp);
 }
 
@@ -325,11 +327,11 @@ void loadData(Companies *companies, BranchActivity *branch, char *filename) {
     for (int i = 0; i < companies->companiesCounter; i++) {
         fread(&companies->company[i], sizeof(Company), 1, fp);
         fread(&branch->branch[i], sizeof(Branch), 1, fp);
-        
-        companies->company[i].comments = (Comment *) malloc(companies->company[i].maxComments * sizeof(Comment));
+
+        companies->company[i].comments = (Comment *)malloc(companies->company[i].maxComments * sizeof(Comment));
         fread(companies->company[i].comments, sizeof(Comment), companies->company[i].commentsCounter, fp);
-        
     }
+
 
     fclose(fp);
 }

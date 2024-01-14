@@ -24,29 +24,11 @@
 #define FILENAME "companies.bin"
 
 /**
- * @struct Companies
- * @brief Structure to hold information about companies.
- * @var Companies::companiesCounter
- * Member variable to store the number of companies.
- * @var Companies::maxCompanies
- * Member variable to define the maximum number of companies.
- */
-
-/**
- * @struct BranchActivity
- * @brief Structure to hold information about branch activity.
- * @var BranchActivity::maxBranch
- * Member variable to define the maximum number of branches.
- * @var BranchActivity::branchCounter
- * Member variable to store the number of branches.
- */
-
-/**
  * @brief Main function to execute the program.
  * @return Returns EXIT_SUCCESS upon successful execution.
  */
 int main(int argc, char** argv) { 
-    // Initialize Companies and BranchActivity structures
+    // Initialize Companies, Company and BranchActivity structures
     Companies companies = {
         .companiesCounter = 0,
         .maxCompanies = 10,

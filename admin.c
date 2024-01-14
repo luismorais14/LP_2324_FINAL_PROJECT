@@ -22,8 +22,8 @@
  */
 void createActivity(BranchActivity *branch) {
     if (branch->branchCounter == branch->maxBranch) {
-        branch->branch = (Branch *) realloc(branch->branch, branch->maxBranch*2 *sizeof(Branch)); 
-        
+        branch->branch = (Branch *) realloc(branch->branch, branch->maxBranch * 2 * sizeof (Branch));
+
         if (branch->branch != NULL) {
             branch->maxBranch *= 2;
         }
@@ -37,8 +37,14 @@ void createActivity(BranchActivity *branch) {
             cleanInputBuffer();
             branch->branchCounter--;
         } else {
+            for (int i = 0; i < branch->branchCounter - 1; i++) {
+                if (strcasecmp(branch->branch[i].branch, branch->branch[branch->branchCounter - 1].branch) == 0) {
+                    puts(ERROR_BRANCH_ALREADY_EXIST);
+                    return;
+                }
+            }
             branch->branch[branch->branchCounter].branch[strcspn(branch->branch[branch->branchCounter].branch, "\n")] = '\0';
-            
+
             puts("New branch created successfully!\n");
             branch->branch[branch->branchCounter].status = ATIVO;
             branch->branchCounter++;
@@ -63,9 +69,9 @@ int insertCompany(Companies *companies, BranchActivity *branch) {
 
     if (companies->companiesCounter == companies->maxCompanies) {
         Company *pCompany;
-        pCompany = (Company *) realloc(companies->company, companies->maxCompanies * 2 * sizeof(Company));
+        pCompany = (Company *) realloc(companies->company, companies->maxCompanies * 2 * sizeof (Company));
 
-        if (pCompany != NULL ) {
+        if (pCompany != NULL) {
             companies->maxCompanies *= 2;
             companies->company = pCompany;
         }
@@ -75,7 +81,7 @@ int insertCompany(Companies *companies, BranchActivity *branch) {
         if (searchCompanyNif(*companies, nif) == -1) {
             company->nif = nif;
             readString(company->name, MAX_NAME, MSG_GET_NAME);
-            readString(company->adress, MAX_ADRESS, MSG_GET_ADRESS); 
+            readString(company->adress, MAX_ADRESS, MSG_GET_ADRESS);
             do {
                 readString(company->postalCode, MAX_POSTAL_CODE, MSG_GET_POSTAL_CODE);
 
@@ -87,20 +93,20 @@ int insertCompany(Companies *companies, BranchActivity *branch) {
 
                 verification = postalCodeVerification(company->postalCode);
             } while (verification == -1);
-       
+
             readString(company->location, MAX_LOCATION, MSG_GET_LOCATION);
             selectBranch(branch, tmpBranch);
             strcpy(company->branch, tmpBranch);
             company->companyCategory = getNum(MIN_CATEGORY, MAX_CATEGORY, MSG_GET_CATEGORY);
             company->status = ATIVO;
-            
+
             company->maxComments = 5;
             company->commentsCounter = 0;
-            company->comments = (Comment *) malloc(company->maxComments * sizeof(Comment));
-            
+            company->comments = (Comment *) malloc(company->maxComments * sizeof (Comment));
+
             company->classificationCounter = 0;
             company->classification = 0;
-            
+
 
             return companies->companiesCounter++;
         }
@@ -117,11 +123,11 @@ int insertCompany(Companies *companies, BranchActivity *branch) {
  * @param branch The structure holding information about branch activities.
  */
 void insertCompanies(Companies *company, BranchActivity *branch) {
-        if (insertCompany(company, branch) == -1) {
-            puts(ERROR_COMPANY_ALREADY_EXIST);
-            return;
-        }
-}  
+    if (insertCompany(company, branch) == -1) {
+        puts(ERROR_COMPANY_ALREADY_EXIST);
+        return;
+    }
+}
 
 /**
  * @brief Update company information based on NIF.
@@ -132,7 +138,7 @@ void insertCompanies(Companies *company, BranchActivity *branch) {
 void updateCompany(Company *company, BranchActivity *branch) {
     int verification, nif = getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF);
     char tmpBranch[MAX_BRANCH];
-    
+
     company->nif = nif;
     readString((*company).name, MAX_NAME, MSG_GET_NAME);
     readString((*company).adress, MAX_ADRESS, MSG_GET_ADRESS);
@@ -147,7 +153,7 @@ void updateCompany(Company *company, BranchActivity *branch) {
 
         verification = postalCodeVerification(company->postalCode);
     } while (verification == -1);
-    
+
     readString((*company).location, MAX_LOCATION, MSG_GET_LOCATION);
     selectBranch(branch, tmpBranch);
     strcpy((*company).branch, tmpBranch);
@@ -161,10 +167,10 @@ void updateCompany(Company *company, BranchActivity *branch) {
  * @param branch The structure holding information about branch activities.
  * @param filename The name of the file to save the changes.
  */
-void updateCompaniesByNif(Companies *companies, BranchActivity *branch) {    
-    int  value = searchCompanyNif(*companies, getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF));
-    
-    if (value != -1){
+void updateCompaniesByNif(Companies *companies, BranchActivity *branch) {
+    int value = searchCompanyNif(*companies, getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF));
+
+    if (value != -1) {
         updateCompany(&(*companies).company[value], branch);
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
@@ -178,7 +184,7 @@ void updateCompaniesByNif(Companies *companies, BranchActivity *branch) {
  * @param branch The structure holding information about branch activities.
  * @param filename The name of the file to save the changes.
  */
-void updateCompaniesByName(Companies *companies, BranchActivity *branch) {    
+void updateCompaniesByName(Companies *companies, BranchActivity *branch) {
     char tempName[MAX_NAME];
 
     puts(MSG_GET_NAME);
@@ -190,16 +196,16 @@ void updateCompaniesByName(Companies *companies, BranchActivity *branch) {
             cleanInputBuffer();
         }
     }
-    
+
     int value = searchCompanyName(*companies, tempName);
-    
-    if (value != -1){
+
+    if (value != -1) {
         updateCompany(&(*companies).company[value], branch);
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
         return;
     }
-    
+
 }
 
 /**
@@ -208,7 +214,7 @@ void updateCompaniesByName(Companies *companies, BranchActivity *branch) {
  * @param branch The structure holding information about branch activities.
  * @param filename The name of the file to save the changes.
  */
-void updateCompaniesByLocation(Companies *companies, BranchActivity *branch) {    
+void updateCompaniesByLocation(Companies *companies, BranchActivity *branch) {
     char tempLocation[MAX_NAME];
 
     puts(MSG_GET_NAME);
@@ -222,8 +228,8 @@ void updateCompaniesByLocation(Companies *companies, BranchActivity *branch) {
     }
 
     int value = searchCompanyLocation(*companies, tempLocation);
-    
-    if (value != -1){
+
+    if (value != -1) {
         updateCompany(&(*companies).company[value], branch);
     } else {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
@@ -238,9 +244,9 @@ void updateCompaniesByLocation(Companies *companies, BranchActivity *branch) {
 void updateBranches(BranchActivity *branch) {
     if (branch->branchCounter > 0) {
         int value = editBranch(branch);
-    
-        cleanInputBuffer();
-        readString(&(*branch).branch[value].branch ,MAX_BRANCH , MSG_CREATE_BRANCH);
+
+        cleanInputBuffer();  
+        readString(&(*branch).branch[value].branch, MAX_BRANCH, MSG_CREATE_BRANCH);
     } else {
         puts("There are no branches of activity available for editing. Please create one first.");
     }
@@ -278,7 +284,7 @@ void deleteCompanyNif(Companies *companies) {
 void deleteCompanyName(Companies *companies) {
     char tmpName[MAX_NAME];
     int index, i;
-    
+
     puts(MSG_GET_NAME);
     if (scanf("%s", tmpName) != NULL) {
         unsigned int len = strlen(tmpName) - 1;
@@ -288,9 +294,9 @@ void deleteCompanyName(Companies *companies) {
             cleanInputBuffer();
         }
     }
-    
+
     index = searchCompanyName(*companies, tmpName);
-    
+
     if (index != -1) {
         if (companies->company[index].commentsCounter == 0) {
             for (i = index; i < companies->companiesCounter - 1; i++) {
@@ -326,9 +332,9 @@ void deleteCompanyLocation(Companies *companies) {
             cleanInputBuffer();
         }
     }
-    
+
     index = searchCompanyLocation(*companies, tempLocation);
-    
+
     if (index != -1) {
         if (companies->company[index].commentsCounter == 0) {
             for (i = index; i < companies->companiesCounter - 1; i++) {
@@ -395,7 +401,6 @@ void manageCommentsNif(Companies *companies) {
         puts(ERROR_COMPANY_DOES_NOT_EXIST);
     }
 }
-
 
 /**
  * @brief Manage comments for a specific company based on name.
@@ -538,10 +543,10 @@ void deleteBranch(Companies *companies, BranchActivity *branch) {
  * @param companies The structure holding information about companies.
  * @param branchActivity The structure holding information about branch activities.
  */
-void listHigherCompanies(Companies *companies, BranchActivity *branchActivity) { 
+void listHigherCompanies(Companies *companies, BranchActivity *branchActivity) {
     if (companies->companiesCounter > 0) {
         int i, j, index;
-        
+
         for (i = 0; i < companies->companiesCounter; i++) {
             for (j = 0; j < branchActivity->branchCounter; j++) {
                 if (strcmp(companies->company[i].branch, branchActivity->branch[j].branch) == 0) {
