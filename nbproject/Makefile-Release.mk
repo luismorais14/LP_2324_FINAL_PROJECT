@@ -62,11 +62,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/lp_2324_final_project-7e237302894d9fc47c046acab07ea4ad74727828.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/lp_2324_final_project.exe
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/lp_2324_final_project-7e237302894d9fc47c046acab07ea4ad74727828.exe: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/lp_2324_final_project.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/lp_2324_final_project-7e237302894d9fc47c046acab07ea4ad74727828 ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/lp_2324_final_project ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/admin.o: admin.c
 	${MKDIR} -p ${OBJECTDIR}

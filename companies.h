@@ -130,8 +130,6 @@ typedef struct {
 
 /**
  * @brief Loads data from a file into the Companies and BranchActivity structures.
- *
- *
  * @param companies Pointer to the Companies structure.
  * @param branch Pointer to the BranchActivity structure.
  * @param filename Name of the file from which data is loaded.
@@ -140,8 +138,6 @@ void loadData(Companies *companies, BranchActivity *branch, char *filename);
 
 /**
  * @brief Saves data from the Companies and BranchActivity structures into a file.
- *
- *
  * @param companies Pointer to the Companies structure.
  * @param branch Pointer to the BranchActivity structure.
  * @param filename Name of the file in which data is saved.
@@ -150,16 +146,12 @@ void saveData(Companies *companies, BranchActivity *branch, char*);
 
 /**
  * @brief Prints information about branches.
- *
- *
  * @param branch BranchActivity structure containing branch information.
  */
 void printBranches(BranchActivity branch);
 
 /**
  * @brief Frees memory allocated for the Companies and BranchActivity structures.
- *
- *
  * @param companies Pointer to the Companies structure.
  * @param branch Pointer to the BranchActivity structure.
  */
@@ -167,8 +159,6 @@ void freeMemory(Companies *companies, BranchActivity *branch);
 
 /**
  * @brief Logs a message to a file.
- *
- *
  * @param msg Message to be logged.
  * @param filename Name of the log file.
  */
@@ -176,8 +166,6 @@ void logFile(char *msg, char *filename);
 
 /**
  * @brief Verifies the format of a postal code.
- *
- *
  * @param zipCode String containing the postal code to be verified.
  * @return 0 if the postal code is valid, -1 otherwise.
  */
@@ -185,8 +173,6 @@ int postalCodeVerification(char *zipCode);
 
 /**
  * @brief Verifies the format of an email address.
- *
- *
  * @param comment Pointer to the Comment structure containing the email to be verified.
  * @return -1 if the email address is valid, 1 otherwise.
  */

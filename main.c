@@ -3,12 +3,7 @@
  * @brief Main program file for the Company Management System.
  * @author Luís Morais & Cláudio Coelho
  * @date 24-11-2023
- * 
- * @brief The C program consists of developing a business directory application that allows users to 
- * discover, evaluate and interact with industrial and service companies located in a given geographical region.
- * This project aims to connect consumers with local businesses and promote economic activity.
- * 
- * @version 1
+ *
  */
 
 #include <stdio.h>
@@ -31,7 +26,7 @@ int main(int argc, char** argv) {
     // Initialize Companies, Company and BranchActivity structures
     Companies companies = {
         .companiesCounter = 0,
-        .maxCompanies = 10,
+        .maxCompanies = 10
     };
     
     Company company = {
