@@ -12,8 +12,6 @@
 #include "menus.h"
 #include "companies.h"
 #include "input.h"
-#include "admin.h"
-#include "user.h"
 
 
 #define FILENAME "companies.bin"

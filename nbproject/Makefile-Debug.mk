@@ -35,13 +35,11 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/admin.o \
 	${OBJECTDIR}/companies.o \
 	${OBJECTDIR}/input.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/menus.o \
-	${OBJECTDIR}/tools.o \
-	${OBJECTDIR}/user.o
+	${OBJECTDIR}/tools.o
 
 
 # C Compiler Flags
@@ -68,11 +66,6 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/lp_2324_final_project.exe: ${OBJECTFI
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/lp_2324_final_project ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/admin.o: admin.c
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/admin.o admin.c
-
 ${OBJECTDIR}/companies.o: companies.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -97,11 +90,6 @@ ${OBJECTDIR}/tools.o: tools.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/tools.o tools.c
-
-${OBJECTDIR}/user.o: user.c
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/user.o user.c
 
 # Subprojects
 .build-subprojects:

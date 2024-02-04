@@ -12,8 +12,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "user.h"
-#include "admin.h"
 #include <ctype.h>
 #include <time.h>
 
@@ -71,7 +69,7 @@ int emailVerification(Comment *comment) {
  * @return 0 if the postal code is valid, -1 otherwise.
  */
 int postalCodeVerification(char *zipCode) {
-    if (strlen(zipCode) == 8 && isdigit(zipCode[0]) && isdigit(zipCode[1]) && isdigit(zipCode[2]) && isdigit(zipCode[3]) && zipCode[4] == '-' && isdigit(zipCode[5]) && isdigit(zipCode[6]) && isdigit(zipCode[7])) {
+    if (strlen(zipCode) == 8 && isdigit((unsigned char) zipCode[0]) && isdigit((unsigned char) zipCode[1]) && isdigit((unsigned char) zipCode[2]) && isdigit((unsigned char) zipCode[3]) && (unsigned char) zipCode[4] == '-' && isdigit((unsigned char) zipCode[5]) && isdigit((unsigned char) zipCode[6]) && isdigit((unsigned char) zipCode[7])) {
         return 0;
     }
     puts("Invalid postal code format. Please enter a new one.");
@@ -135,7 +133,7 @@ void printCompany(Company company, Branch branch) {
     if (company.status == ATIVO && branch.status == ATIVO) {
         puts("----------------------------");
         printf("Name: %s\n", company.name);
-        printf("Nif: %u\n", company.nif);
+        printf("Nif: %d\n", company.nif);
         printf("Adress: %s\n", company.adress);
         printf("Location: %s\n", company.location);
         printf("Postal Code: %s\n", company.postalCode);
@@ -207,7 +205,6 @@ void deleteCompanyData(Company *company) {
     strcpy(company->location, "");
     company->nif = 0;
     company->status = INATIVO;
-    company->companyCategory = EMPTY;
 }
 
 /**
@@ -429,6 +426,909 @@ void logFile(char *msg, char *filename) {
     fprintf(fp, "%d-%02d-%02d %02d:%02d:%02d - %s\n", tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, msg);
 
     fclose(fp);
+}
+
+/**
+ * @brief Create a new branch of activity.
+ * @param branch The structure holding information about branch activities.
+ */
+void createActivity(BranchActivity *branch) {
+    if (branch->branchCounter == branch->maxBranch) {
+        branch->branch = (Branch *) realloc(branch->branch, branch->maxBranch * 2 * sizeof (Branch));
+
+        if (branch->branch != NULL) {
+            branch->maxBranch *= 2;
+        }
+    }
+
+    if (branch->branch != NULL) {
+        puts("Enter the new branch name: ");
+        cleanInputBuffer();
+        if (fgets(branch->branch[branch->branchCounter].branch, MAX_BRANCH, stdin) == NULL) {
+            puts("Invalid input. New branch creation failed.");
+            cleanInputBuffer();
+            branch->branchCounter--;
+        } else {
+            for (int i = 0; i < branch->branchCounter - 1; i++) {
+                if (strcasecmp(branch->branch[i].branch, branch->branch[branch->branchCounter - 1].branch) == 0) {
+                    puts(ERROR_BRANCH_ALREADY_EXIST);
+                    return;
+                }
+            }
+            branch->branch[branch->branchCounter].branch[strcspn(branch->branch[branch->branchCounter].branch, "\n")] = '\0';
+
+            puts("New branch created successfully!\n");
+            branch->branch[branch->branchCounter].status = ATIVO;
+            branch->branchCounter++;
+        }
+    } else {
+        puts("Memory reallocation failed. Unable to create a new branch.\n");
+        branch->branchCounter--;
+    }
+}
+
+/**
+ * @brief Insert a new company into the system.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @return Returns the index of the newly inserted company.
+ */
+int insertCompany(Companies *companies, BranchActivity *branch) {
+    int verification, nif = getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF);
+    char tmpBranch[MAX_BRANCH];
+
+    Company *company = &companies->company[companies->companiesCounter];
+
+    if (companies->companiesCounter == companies->maxCompanies) {
+        Company *pCompany;
+        pCompany = (Company *) realloc(companies->company, companies->maxCompanies * 2 * sizeof (Company));
+
+        if (pCompany != NULL) {
+            companies->maxCompanies *= 2;
+            companies->company = pCompany;
+        }
+    }
+
+    if (branch->branchCounter != 0) {
+        if (searchCompanyNif(*companies, nif) == -1) {
+            company->nif = nif;
+            readString(company->name, MAX_NAME, MSG_GET_NAME);
+            readString(company->adress, MAX_ADRESS, MSG_GET_ADRESS);
+            do {
+                readString(company->postalCode, MAX_POSTAL_CODE, MSG_GET_POSTAL_CODE);
+
+                size_t len = strlen(company->postalCode);
+
+                if (len > 0 && company->postalCode[len - 1] == '\n') {
+                    company->postalCode[len - 1] = '\0';
+                }
+
+                verification = postalCodeVerification(company->postalCode);
+            } while (verification == -1);
+
+            readString(company->location, MAX_LOCATION, MSG_GET_LOCATION);
+            selectBranch(branch, tmpBranch);
+            strcpy(company->branch, tmpBranch);
+            company->companyCategory = getNum(MIN_CATEGORY, MAX_CATEGORY, MSG_GET_CATEGORY);
+            company->status = ATIVO;
+
+            company->maxComments = 5;
+            company->commentsCounter = 0;
+            company->comments = (Comment *) malloc(company->maxComments * sizeof (Comment));
+
+            company->classificationCounter = 0;
+            company->classification = 0;
+
+
+            return companies->companiesCounter++;
+        }
+    } else {
+        puts(ERROR_CREATE_BRANCH);
+        return -2;
+    }
+    return -1;
+}
+
+/**
+ * @brief Wrapper function to insert a new company into the system.
+ * @param company The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ */
+void insertCompanies(Companies *company, BranchActivity *branch) {
+    if (insertCompany(company, branch) == -1) {
+        puts(ERROR_COMPANY_ALREADY_EXIST);
+        return;
+    }
+}
+
+/**
+ * @brief Update company information based on NIF.
+ * @param company The structure holding information about a specific company.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The name of the file to save the changes.
+ */
+void updateCompany(Company *company, BranchActivity *branch) {
+    int verification, nif = getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF);
+    char tmpBranch[MAX_BRANCH];
+
+    company->nif = nif;
+    readString((*company).name, MAX_NAME, MSG_GET_NAME);
+    readString((*company).adress, MAX_ADRESS, MSG_GET_ADRESS);
+    do {
+        readString(company->postalCode, MAX_POSTAL_CODE, MSG_GET_POSTAL_CODE);
+
+        size_t len = strlen(company->postalCode);
+
+        if (len > 0 && company->postalCode[len - 1] == '\n') {
+            company->postalCode[len - 1] = '\0';
+        }
+
+        verification = postalCodeVerification(company->postalCode);
+    } while (verification == -1);
+
+    readString((*company).location, MAX_LOCATION, MSG_GET_LOCATION);
+    selectBranch(branch, tmpBranch);
+    strcpy((*company).branch, tmpBranch);
+    (*company).companyCategory = getNum(MIN_CATEGORY, MAX_CATEGORY, MSG_GET_CATEGORY);
+    (*company).status = getNum(MIN_STATUS, MAX_STATUS, MSG_GET_STATUS);
+}
+
+/**
+ * @brief Update company information based on NIF.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The name of the file to save the changes.
+ */
+void updateCompaniesByNif(Companies *companies, BranchActivity *branch) {
+    int value = searchCompanyNif(*companies, getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF));
+
+    if (value != -1) {
+        updateCompany(&(*companies).company[value], branch);
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+        return;
+    }
+}
+
+/**
+ * @brief Update company information based on name.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The name of the file to save the changes.
+ */
+void updateCompaniesByName(Companies *companies, BranchActivity *branch) {
+    char tempName[MAX_NAME];
+
+    puts(MSG_GET_NAME);
+    if (scanf("%s", tempName) == 1) {
+        unsigned int len = strlen(tempName) - 1;
+        if (tempName[len] == '\n') {
+            tempName[len] = '\0';
+        } else {
+            cleanInputBuffer();
+        }
+    }
+
+    int value = searchCompanyName(*companies, tempName);
+
+    if (value != -1) {
+        updateCompany(&(*companies).company[value], branch);
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+        return;
+    }
+
+}
+
+/**
+ * @brief Update company information based on location.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The name of the file to save the changes.
+ */
+void updateCompaniesByLocation(Companies *companies, BranchActivity *branch) {
+    char tempLocation[MAX_NAME];
+
+    puts(MSG_GET_NAME);
+    if (scanf("%s", tempLocation) == 1) {
+        unsigned int len = strlen(tempLocation) - 1;
+        if (tempLocation[len] == '\n') {
+            tempLocation[len] = '\0';
+        } else {
+            cleanInputBuffer();
+        }
+    }
+
+    int value = searchCompanyLocation(*companies, tempLocation);
+
+    if (value != -1) {
+        updateCompany(&(*companies).company[value], branch);
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+        return;
+    }
+}
+
+/**
+ * @brief Update branch information.
+ * @param branch The structure holding information about branch activities.
+ */
+void updateBranches(Companies *companies, BranchActivity *branch) {
+    printf("%d", companies->company[0].status);
+    printf("%d", branch->branch[0].status);
+    if (branch->branchCounter > 0) {
+        int value = editBranch(branch);
+        
+        char tmpBranch[MAX_BRANCH];
+        strcpy(tmpBranch, branch->branch[value].branch);
+        
+        for (int i = 0; i < companies->companiesCounter; i++) {
+            if (strcasecmp(companies->company[i].branch, tmpBranch) == 0) {
+                cleanInputBuffer();  
+                strcpy(companies->company[i].branch, tmpBranch);
+            }
+        }
+        
+        readString(branch->branch[value].branch, MAX_BRANCH, MSG_CREATE_BRANCH);
+        branch->branch[value].status = ATIVO;
+    } else {
+        puts("There are no branches of activity available for editing. Please create one first.");
+    }
+}
+
+
+/**
+ * @brief Delete a company based on NIF.
+ * @param companies The structure holding information about companies.
+ */
+void deleteCompanyNif(Companies *companies) {
+    int i, index = searchCompanyNif(*companies, getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF));
+
+    if (index != -1) {
+        if (companies->company[index].commentsCounter == 0) {
+            for (i = index; i < companies->companiesCounter - 1; i++) {
+                companies->company[i] = companies->company[i + 1];
+            }
+
+            deleteCompanyData(&companies->company[i]);
+
+            companies->companiesCounter--;
+        } else {
+            companies->company[index].status = INATIVO;
+        }
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+        return;
+    }
+}
+
+/**
+ * @brief Delete a company based on name.
+ * @param companies The structure holding information about companies.
+ */
+void deleteCompanyName(Companies *companies) {
+    char tmpName[MAX_NAME];
+    int index, i;
+
+    puts(MSG_GET_NAME);
+    if (scanf("%s", tmpName) == 1) {
+        unsigned int len = strlen(tmpName) - 1;
+        if (tmpName[len] == '\n') {
+            tmpName[len] = '\0';
+        } else {
+            cleanInputBuffer();
+        }
+    }
+
+    index = searchCompanyName(*companies, tmpName);
+
+    if (index != -1) {
+        if (companies->company[index].commentsCounter == 0) {
+            for (i = index; i < companies->companiesCounter - 1; i++) {
+                companies->company[i] = companies->company[i + 1];
+            }
+
+            deleteCompanyData(&companies->company[i]);
+
+            companies->companiesCounter--;
+        } else {
+            companies->company[index].status = INATIVO;
+        }
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+        return;
+    }
+}
+
+/**
+ * @brief Delete a company based on location.
+ * @param companies The structure holding information about companies.
+ */
+void deleteCompanyLocation(Companies *companies) {
+    char tempLocation[MAX_NAME];
+    int index, i;
+
+    puts(MSG_GET_LOCATION);
+    if (scanf("%s", tempLocation) == 1) {
+        unsigned int len = strlen(tempLocation) - 1;
+        if (tempLocation[len] == '\n') {
+            tempLocation[len] = '\0';
+        } else {
+            cleanInputBuffer();
+        }
+    }
+
+    index = searchCompanyLocation(*companies, tempLocation);
+
+    if (index != -1) {
+        if (companies->company[index].commentsCounter == 0) {
+            for (i = index; i < companies->companiesCounter - 1; i++) {
+                companies->company[i] = companies->company[i + 1];
+            }
+
+            deleteCompanyData(&companies->company[i]);
+
+            companies->companiesCounter--;
+        } else {
+            companies->company[index].status = INATIVO;
+        }
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+        return;
+    }
+}
+
+/**
+ * @brief Manage comments for a specific company based on NIF.
+ * @param companies The structure holding information about companies.
+ */
+void manageCommentsNif(Companies *companies) {
+    long long value = searchCompanyNif(*companies, getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF));
+    int option1, option2, i;
+
+    if (value != -1) {
+        if (companies->company[value].commentsCounter > 0) {
+            puts("Select the title of the comment to hide/delete: ");
+            listCommentsTitle(companies->company[value]);
+            scanf("%d", &option1);
+
+            puts("Choose what you want to do: ");
+            puts("0- Delete Comment");
+            puts("1- Hide Comment");
+            scanf("%d", &option2);
+
+            switch (option2) {
+                case 0:
+                    if (option1 >= 0 && option1 < companies->company[value].commentsCounter) {
+                        for (i = option1; i < companies->company[value].commentsCounter - 1; i++) {
+                            companies->company[value].comments[i] = companies->company[value].comments[i + 1];
+                        }
+
+                        deleteCommentsData(&companies->company[value], companies->company[value].commentsCounter - 1);
+
+                        companies->company[value].commentsCounter--;
+                    } else {
+                        puts("Invalid comment index.");
+                    }
+                    break;
+                case 1:
+                    if (option1 >= 0 && option1 < companies->company[value].commentsCounter) {
+                        companies->company[value].comments[option1].status = INATIVO;
+                    } else {
+                        puts("Invalid comment index.");
+                    }
+                    break;
+            }
+        } else {
+            puts("There is no comments to hide/delete.");
+        }
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+/**
+ * @brief Manage comments for a specific company based on name.
+ * @param companies The structure holding information about companies.
+ */
+void manageCommetsName(Companies *companies) {
+    char tempName[MAX_NAME];
+    int option1, option2, i;
+
+    cleanInputBuffer();
+    readString(tempName, MAX_NAME, MSG_GET_NAME);
+
+    int value = searchCompanyName(*companies, tempName);
+
+    if (value != -1) {
+        if (companies->company[value].commentsCounter > 0) {
+            puts("Select the title of the comment to hide/delete: ");
+            listCommentsTitle(companies->company[value]);
+            scanf("%d", &option1);
+
+            puts("Choose what you want to do: ");
+            puts("0- Delete Comment");
+            puts("1- Hide Comment");
+            scanf("%d", &option2);
+
+            switch (option2) {
+                case 0:
+                    if (option1 >= 0 && option1 < companies->company[value].commentsCounter) {
+                        for (i = option1; i < companies->company[value].commentsCounter - 1; i++) {
+                            companies->company[value].comments[i] = companies->company[value].comments[i + 1];
+                        }
+
+                        deleteCommentsData(&companies->company[value], companies->company[value].commentsCounter - 1);
+
+                        companies->company[value].commentsCounter--;
+                    } else {
+                        puts("Invalid comment index.");
+                    }
+                    break;
+                case 1:
+                    if (option1 >= 0 && option1 < companies->company[value].commentsCounter) {
+                        companies->company[value].comments[option1].status = INATIVO;
+                    } else {
+                        puts("Invalid comment index.");
+                    }
+                    break;
+            }
+        } else {
+            puts("There is no comments to hide/delete.");
+        }
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+/**
+ * @brief Manage comments for a specific company based on location.
+ * @param companies The structure holding information about companies.
+ */
+void manageCommentsLocation(Companies *companies) {
+    char tempLocation[MAX_NAME];
+    int option1, option2, i;
+
+    cleanInputBuffer();
+    readString(tempLocation, MAX_LOCATION, MSG_GET_LOCATION);
+
+    int value = searchCompanyLocation(*companies, tempLocation);
+
+    if (value != -1) {
+        if (companies->company[value].commentsCounter > 0) {
+            puts("Select the title of the comment to hide/delete: ");
+            listCommentsTitle(companies->company[value]);
+            scanf("%d", &option1);
+
+            puts("Choose what you want to do: ");
+            puts("0- Delete Comment");
+            puts("1- Hide Comment");
+            scanf("%d", &option2);
+
+            switch (option2) {
+                case 0:
+                    if (option1 >= 0 && option1 < companies->company[value].commentsCounter) {
+                        for (i = option1; i < companies->company[value].commentsCounter - 1; i++) {
+                            companies->company[value].comments[i] = companies->company[value].comments[i + 1];
+                        }
+
+                        deleteCommentsData(&companies->company[value], companies->company[value].commentsCounter - 1);
+
+                        companies->company[value].commentsCounter--;
+                    } else {
+                        puts("Invalid comment index.");
+                    }
+                    break;
+                case 1:
+                    if (option1 >= 0 && option1 < companies->company[value].commentsCounter) {
+                        companies->company[value].comments[option1].status = INATIVO;
+                    } else {
+                        puts("Invalid comment index.");
+                    }
+                    break;
+            }
+        } else {
+            puts("There is no comments to hide/delete.");
+        }
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+/**
+ * @brief Delete a branch of activity.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ */
+void deleteBranch(Companies *companies, BranchActivity *branch) {
+    if (branch->branchCounter > 0) {
+        int value = removeBranch(branch);
+
+        for (int i = 0; i < companies->companiesCounter; i++) {
+            if (strcmp(companies->company[i].branch, branch->branch[value].branch) == 0) {
+                puts("You cannot delete this branch of activity. You can only change the branch status to INACTIVE.");
+                branch->branch[value].status = INATIVO;
+                return;
+            }
+        }
+
+        for (int j = value; j < branch->branchCounter - 1; j++) {
+            strcpy(branch->branch[j].branch, branch->branch[j + 1].branch);
+            branch->branch[j].status = branch->branch[j + 1].status;
+        }
+
+        branch->branchCounter--;
+    } else {
+        puts("There are no branches of activity available for removal. Please create one first.");
+    }
+}
+
+/**
+ * @brief List companies with higher average ratings.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
+void listHigherCompanies(Companies *companies, BranchActivity *branchActivity) {
+    if (companies->companiesCounter > 0) {
+        int i, j, index;
+
+        for (i = 0; i < companies->companiesCounter; i++) {
+            for (j = 0; j < branchActivity->branchCounter; j++) {
+                if (strcmp(companies->company[i].branch, branchActivity->branch[j].branch) == 0) {
+                    index = j;
+                }
+                if (calculateAverageRating(&companies->company[i]) > 4.5) {
+                    printCompany(companies->company[i], branchActivity->branch[index]);
+                    printf("Average rating: %.2f\n", calculateAverageRating(&companies->company[i]));
+                    listComments(companies->company[i]);
+                }
+            }
+        }
+
+    } else {
+        puts(ERROR_EMPY_LIST);
+    }
+}
+
+/**
+ * @brief List the most searched companies.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ * @param sizeOfTop The number of top companies to list.
+ */
+void listMostCompanies(Companies companies, BranchActivity branchActivity, int sizeOfTop) {
+    int index;
+    int size = companies.companiesCounter >= sizeOfTop ? sizeOfTop : companies.companiesCounter;
+    int array[size];
+    if (companies.companiesCounter > 0) {
+        mostSearchedCompanies(companies, size, array);
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < branchActivity.branchCounter; j++) {
+                if (strcmp(companies.company[i].branch, branchActivity.branch[j].branch) == 0) {
+                    index = j;
+                    printCompany(companies.company[i], branchActivity.branch[index]);
+                    printf("Average Rating: %.2f\n", calculateAverageRating(&companies.company[i]));
+                    listComments(companies.company[array[i]]);
+                }
+            }
+        }
+    }
+}
+
+
+/**
+ * @brief Display company information based on NIF.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
+void companyNif(Companies companies, BranchActivity branchActivity) {
+    int index, i; 
+    long long value = searchCompanyNif(companies, getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF));
+ 
+    for (i = 0; i < branchActivity.branchCounter; i++) {
+        if (strcmp(companies.company[value].branch, branchActivity.branch[i].branch) == 0) {
+            index = i;
+        }
+    }
+    
+    if (value != -1) {
+        printCompany(companies.company[value], branchActivity.branch[index]);
+        printf("Average rating: %.2f\n", (float) companies.company[value].classification);
+        listComments(companies.company[value]);
+        companies.company[value].searchCounter++;
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+
+/**
+ * @brief Display company information based on name.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
+void companyName(Companies companies, BranchActivity branchActivity) {
+    int index, i;
+    char tempName[MAX_NAME];
+
+    cleanInputBuffer();
+    readString(tempName, MAX_NAME, MSG_GET_NAME);
+
+    int value = searchCompanyName(companies, tempName);
+    
+    for (i = 0; i < branchActivity.branchCounter; i++) {
+        if (strcmp(companies.company[value].branch, branchActivity.branch[i].branch) == 0) {
+            index = i;
+        }
+    }
+
+    if (value != -1) {
+        printCompany(companies.company[value], branchActivity.branch[index]);
+        printf("Average rating: %.2f\n",(float) companies.company[value].classification);
+        listComments(companies.company[value]);
+        companies.company[value].searchCounter++;
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+/**
+ * @brief Display company information based on location.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
+void companyLocation(Companies companies, BranchActivity branchActivity) {
+    int index, i;
+    char tempLocation[MAX_NAME];
+
+    cleanInputBuffer();
+    readString(tempLocation, MAX_LOCATION, MSG_GET_LOCATION);
+
+    int value = searchCompanyLocation(companies, tempLocation);
+
+    for (i = 0; i < branchActivity.branchCounter; i++) {
+        if (strcmp(companies.company[value].branch, branchActivity.branch[i].branch) == 0) {
+            index = i;
+        }
+    }
+    
+    if (value != -1) {
+        printCompany(companies.company[value], branchActivity.branch[index]);
+        printf("Average rating: %.2f\n", (float) companies.company[value].classification);
+        listComments(companies.company[value]);
+        companies.company[value].searchCounter++;
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+/**
+ * @brief Select a branch of activity from the available options.
+ * @param branch The structure holding information about branch activities.
+ * @param selectedBranch Pointer to store the selected branch.
+ */
+void selectBranch(BranchActivity *branch, char *selectedBranch) {
+    int option;
+    
+    do {
+        puts("Select one of the following branches of activity:");
+        printBranches(*branch);
+        printf("Choose a branch [0-%d]: ", branch->branchCounter - 1);
+        scanf("%d", &option);
+    
+    if (branch->branch != NULL && option >= 0 && option < branch->branchCounter) {
+            strcpy(selectedBranch, branch->branch[option].branch);
+        } else {
+            puts("Invalid option. Please try again.");
+        }
+    
+    } while (option < 0 || option >= branch->branchCounter);
+}
+
+/**
+ * @brief Create a new comment for a company based on NIF.
+ * @param companies The structure holding information about companies.
+ */
+void createCommentNif(Companies *companies) {
+    int value = getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF);
+    int index = searchCompanyNif(*companies, value);
+    Comment *pComment = &companies->company[index].comments;
+    
+    if (index != -1) {
+        if (companies->company[index].commentsCounter == companies->company[index].maxComments) {
+            pComment = (Comment *) realloc(companies->company[index].comments, companies->company[index].maxComments * 2 * sizeof(Comment));
+        
+            if (pComment != NULL ) {
+                companies->company[index].maxComments *= 2;
+                companies->company[index].comments = pComment;
+            }
+        }
+      
+        do {
+            readString(pComment->email, MAX_EMAIL, MSG_GET_EMAIL);
+        } while (emailVerification(&companies->company[index].comments[companies->company[index].commentsCounter]) == -1);
+        
+        readString(pComment->username, MAX_USERNAME, MSG_GET_USER);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
+        companies->company[index].comments[companies->company[index].commentsCounter].status = ATIVO;
+        
+        companies->company[index].commentsCounter++;
+
+       
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+/**
+ * @brief Create a new comment for a company based on name.
+ * @param companies The structure holding information about companies.
+ */
+void createCommentName(Companies *companies) {
+    char tmpName[MAX_NAME];
+    int index;
+    
+    cleanInputBuffer();
+    
+    readString(tmpName, MAX_NAME, MSG_GET_NAME);
+    
+    index = searchCompanyName(*companies, tmpName);
+    
+    Company *pComment = &companies->company[index].comments;
+    
+    if (index != -1) {
+        if (companies->company[index].commentsCounter == companies->company[index].maxComments) {
+            pComment = (Comment *) realloc(companies->company[index].comments, companies->company[index].maxComments * 2 * sizeof(Comment));
+        
+            if (pComment != NULL ) {
+                companies->company[index].maxComments *= 2;
+                companies->company[index].comments = pComment;
+            }
+        }
+                
+        do {
+            readString(companies->company[index].comments[companies->company[index].commentsCounter].email, MAX_EMAIL, MSG_GET_EMAIL);
+        } while (emailVerification(&companies->company[index].comments[companies->company[index].commentsCounter]) == -1);
+        
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].username, MAX_USERNAME, MSG_GET_USER);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
+        companies->company[index].comments[companies->company[index].commentsCounter].status = ATIVO;
+        
+        companies->company[index].commentsCounter++;
+        
+        
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+/**
+ * @brief Create a new comment for a company based on location.
+ * @param companies The structure holding information about companies.
+ */
+void createCommentLocation(Companies *companies) {
+    char tempLocation[MAX_NAME];
+    int index;
+
+    puts(MSG_GET_NAME);
+    if (scanf("%s", tempLocation) != NULL) {
+        unsigned int len = strlen(tempLocation) - 1;
+        if (tempLocation[len] == '\n') {
+            tempLocation[len] = '\0';
+        } else {
+            cleanInputBuffer();
+        }
+    }
+    
+    index = searchCompanyLocation(*companies, tempLocation);
+    
+    Company *pComment = &companies->company[index].comments;
+    
+    if (index != -1) {
+        if (companies->company[index].commentsCounter == companies->company[index].maxComments) {
+            pComment = (Comment *) realloc(companies->company[index].comments, companies->company[index].maxComments * 2 * sizeof(Comment));
+        
+            if (pComment != NULL ) {
+                companies->company[index].maxComments *= 2;
+                companies->company[index].comments = pComment;
+            }
+        }
+        
+        do {
+            readString(companies->company[index].comments[companies->company[index].commentsCounter].email, MAX_EMAIL, MSG_GET_EMAIL);
+        } while (emailVerification(&companies->company[index].comments[companies->company[index].commentsCounter]) == -1);
+        
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].username, MAX_USERNAME, MSG_GET_USER);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].title, MAX_TITLE, MSG_GET_TITLE);
+        readString(companies->company[index].comments[companies->company[index].commentsCounter].text, MAX_TEXT, MSG_GET_COMMENT);
+        companies->company[index].comments[companies->company[index].commentsCounter].status = ATIVO;
+        
+        companies->company[index].commentsCounter++;
+        
+        
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+/**
+ * @brief Create a new classification for a company based on NIF.
+ * @param companies The structure holding information about companies.
+ */
+void createClassificationNif(Companies *companies) {
+    int nif = getNum(MIN_NIF, MAX_NIF, MSG_GET_NIF);
+    int index = searchCompanyNif(*companies, nif);
+           
+    if (index != -1) {     
+        companies->company[index].classification += getNum(MIN_RATING, MAX_RATING, MSG_GET_RATING);
+        
+        companies->company[index].classificationCounter++;
+    } else {
+       puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+/**
+ * @brief Create a new classification for a company based on name.
+ * @param companies The structure holding information about companies.
+ */
+void createClassificationName(Companies *companies) {
+    char tmpName[MAX_NAME];
+    int index;
+
+    puts(MSG_GET_NAME);
+    if (scanf("%s", tmpName) != NULL) {
+        unsigned int len = strlen(tmpName) - 1;
+        if (tmpName[len] == '\n') {
+            tmpName[len] = '\0';
+        } else {
+            cleanInputBuffer();
+        }
+    }
+    
+    index = searchCompanyName(*companies, tmpName);
+    
+   
+    if (index != -1) {
+        companies->company[index].classification = getNum(MIN_RATING, MAX_RATING, MSG_GET_RATING);
+        
+        companies->company[index].classificationCounter++;
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
+}
+
+/**
+ * @brief Create a new classification for a company based on location.
+ * @param companies The structure holding information about companies.
+ */
+void createClassificationLocation(Companies *companies) {
+    char tempLocation[MAX_NAME];
+    int index;
+
+    puts(MSG_GET_NAME);
+    if (scanf("%s", tempLocation) != NULL) {
+        unsigned int len = strlen(tempLocation) - 1;
+        if (tempLocation[len] == '\n') {
+            tempLocation[len] = '\0';
+        } else {
+            cleanInputBuffer();
+        }
+    }
+    
+    index = searchCompanyLocation(*companies, tempLocation);
+    
+    
+    if (index != -1) {
+        companies->company[index].classification = getNum(MIN_RATING, MAX_RATING, MSG_GET_RATING);
+        
+    companies->company[index].classificationCounter++;
+    } else {
+        puts(ERROR_COMPANY_DOES_NOT_EXIST);
+    }
 }
 
 

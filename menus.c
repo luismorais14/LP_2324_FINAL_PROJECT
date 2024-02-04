@@ -9,8 +9,6 @@
 #include <stdlib.h>
 #include "menus.h"
 #include "companies.h"
-#include "user.h"
-#include "admin.h"
 
 /**
  * @brief Display the search menu options.
@@ -310,7 +308,9 @@ void branchesOfActivity(Companies *companies, BranchActivity *branch) {
                 break;
             case 2:
                 logFile("Update branch of activity", "log.txt");
-                updateBranches(branch);
+                printf("%d", companies->company[0].status);
+                printf("%d", branch->branch[0].status);
+                updateBranches(companies, branch);
                 break;
             case 3:
                 logFile("Delete branch of activity", "log.txt");

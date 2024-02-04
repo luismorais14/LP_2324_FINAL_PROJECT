@@ -7,10 +7,6 @@
 *
 * @brief A header file providing utility functions for user input validation and retrieval.
 *
-* This header file contains a collection of functions designed to facilitate user input
-* in a C or C++ program. It includes functions for obtaining integers, floats, doubles,
-* characters, and strings from the user while performing input validation to ensure
-* that the entered values are within specified ranges or constraints.
 */
 #ifndef COMPANIES_H
 #define COMPANIES_H
@@ -65,17 +61,16 @@ extern "C" {
 #define MAX_BRANCH  40
 #define MSG_GET_BRANCH "Choose one branch or create a new one: "
 #define MSG_CREATE_BRANCH "Enter the company's new branch: "
-#define ERROR_BRANCH_ALREADY_EXIST "ERROR! Branch of activity already exists!"
 
 #define ERROR_COMPANY_DOES_NOT_EXIST "Error! Company does not exist!"
 #define ERROR_COMPANY_ALREADY_EXIST "Error! Company already exists!"
 #define ERROR_EMPY_LIST "Error! The list of companies is empty!"    
 #define ERROR_CREATE_BRANCH "Error: The list of branches of activity is empty. Please create at least one line of business to create a company."    
 #define ERROR_INVALID_EMAIL "Error: Please, enter a valid email format."    
-
+#define ERROR_BRANCH_ALREADY_EXIST "Error creating new branch of activity: Branch already exists."  
 
 typedef enum {
-    MICRO, PME, GRANDE, EMPTY
+    MICRO, PME, GRANDE
 } Category;
 
 
@@ -104,7 +99,7 @@ typedef struct {
 
 
 typedef struct {
-    unsigned int nif;
+    int nif;
     char name[MAX_NAME];
     Category companyCategory;
     char branch[MAX_BRANCH];
@@ -177,7 +172,187 @@ int postalCodeVerification(char *zipCode);
  * @return -1 if the email address is valid, 1 otherwise.
  */
 int emailVerification(Comment *comment);
+      
+/**
+ * @brief Create a new branch of activity.
+ * @param branch The structure holding information about branch activities.
+ */
+void createActivity(BranchActivity *branch);
 
+/**
+ * @brief Insert a new company into the system.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @return Returns the index of the newly inserted company.
+ */
+int insertCompany(Companies *companies, BranchActivity *branch);
+
+/**
+ * @brief Wrapper function to insert a new company into the system.
+ * @param company The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ */
+void insertCompanies(Companies *company, BranchActivity *branch);
+
+/**
+ * @brief Update company information based on NIF.
+ * @param company The structure holding information about a specific company.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The name of the file to save the changes.
+ */
+void updateCompany(Company *company, BranchActivity *branch);
+
+/**
+ * @brief Update company information based on NIF.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The name of the file to save the changes.
+ */
+void updateCompaniesByNif(Companies *companies, BranchActivity *branch);
+
+/**
+ * @brief Update company information based on name.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The name of the file to save the changes.
+ */
+void updateCompaniesByName(Companies *companies, BranchActivity *branch);
+
+/**
+ * @brief Update company information based on location.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ * @param filename The name of the file to save the changes.
+ */
+void updateCompaniesByLocation(Companies *companies, BranchActivity *branch);
+
+/**
+ * @brief Update branch information.
+ * @param branch The structure holding information about branch activities.
+ */
+void updateBranches(Companies *companies, BranchActivity *branch);
+
+/**
+ * @brief Delete a company based on NIF.
+ * @param companies The structure holding information about companies.
+ */
+void deleteCompanyNif(Companies *companies);
+
+/**
+ * @brief Delete a company based on name.
+ * @param companies The structure holding information about companies.
+ */
+void deleteCompanyName(Companies *companies);
+
+/**
+ * @brief Delete a company based on location.
+ * @param companies The structure holding information about companies.
+ */
+void deleteCompanyLocation(Companies *companies);
+
+/**
+ * @brief Manage comments for a specific company based on NIF.
+ * @param companies The structure holding information about companies.
+ */
+void manageCommentsNif(Companies *companies);
+
+/**
+ * @brief Manage comments for a specific company based on name.
+ * @param companies The structure holding information about companies.
+ */
+void manageCommetsName(Companies *companies);
+
+/**
+ * @brief Manage comments for a specific company based on location.
+ * @param companies The structure holding information about companies.
+ */
+void manageCommentsLocation(Companies *companies);
+
+/**
+ * @brief Delete a branch of activity.
+ * @param companies The structure holding information about companies.
+ * @param branch The structure holding information about branch activities.
+ */
+void deleteBranch(Companies *companies, BranchActivity *branch);
+
+/**
+ * @brief List companies with higher average ratings.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
+void listHigherCompanies(Companies *companies, BranchActivity *branchActivity);
+
+/**
+ * @brief List the most searched companies.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ * @param sizeOfTop The number of top companies to list.
+ */
+void listMostCompanies(Companies companies, BranchActivity branchActivity, int sizeOfTop);
+   
+/**
+ * @brief Display company information based on NIF.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
+void companyNif(Companies companies, BranchActivity branchActivity);
+
+/**
+ * @brief Display company information based on name.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
+void companyName(Companies companies, BranchActivity branchActivity);
+
+/**
+ * @brief Display company information based on location.
+ * @param companies The structure holding information about companies.
+ * @param branchActivity The structure holding information about branch activities.
+ */
+void companyLocation(Companies companies, BranchActivity branchActivity);
+
+/**
+ * @brief Select a branch of activity from the available options.
+ * @param branch The structure holding information about branch activities.
+ * @param selectedBranch Pointer to store the selected branch.
+ */
+void selectBranch(BranchActivity *branch, char *selectedBranch);
+
+/**
+ * @brief Create a new comment for a company based on NIF.
+ * @param companies The structure holding information about companies.
+ */
+void createCommentNif(Companies *companies);
+
+/**
+ * @brief Create a new comment for a company based on name.
+ * @param companies The structure holding information about companies.
+ */
+void createCommentName(Companies *companies);
+
+/**
+ * @brief Create a new comment for a company based on location.
+ * @param companies The structure holding information about companies.
+ */
+void createCommentLocation(Companies *companies);
+
+/**
+ * @brief Create a new classification for a company based on NIF.
+ * @param companies The structure holding information about companies.
+ */
+void createClassificationNif(Companies *companies);
+
+/**
+ * @brief Create a new classification for a company based on name.
+ * @param companies The structure holding information about companies.
+ */
+void createClassificationName(Companies *companies);
+
+/**
+ * @brief Create a new classification for a company based on location.
+ * @param companies The structure holding information about companies.
+ */
+void createClassificationLocation(Companies *companies);
 
 #ifdef __cplusplus
 }
